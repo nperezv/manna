@@ -1,0 +1,280 @@
+.dashboard { min-height: 100vh; }
+
+.dashboard-actions { display: flex; gap: 8px; }
+
+.dashboard-content {
+  padding: 20px 28px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 900px;
+}
+
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+  padding: 0 4px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Hero — iOS large title number */
+.hero-card { overflow: hidden; }
+.hero-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.hero-label {
+  font-size: 0.7rem; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 500; margin-bottom: 6px;
+}
+.hero-amount {
+  font-size: 3rem; font-weight: 700;
+  color: var(--accent); line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.hero-amount.negative { color: var(--danger); }
+.hero-meta { display: flex; gap: 14px; margin-top: 8px; flex-wrap: wrap; }
+.hero-meta-item { font-size: 0.8rem; color: var(--text-tertiary); font-weight: 500; }
+.hero-meta-item.income { color: var(--accent); }
+.hero-meta-item.expense { color: var(--danger); }
+
+/* Savings ring */
+.savings-ring { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+.savings-ring svg { width: 100%; height: 100%; }
+.ring-text {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.ring-pct {
+  font-size: 1.05rem; font-weight: 700;
+  color: var(--text-primary); line-height: 1;
+  letter-spacing: -0.03em;
+}
+.ring-label { font-size: 0.55rem; color: var(--text-tertiary); text-transform: uppercase; font-weight: 500; letter-spacing: 0.04em; }
+
+/* Month nav */
+.month-nav { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.month-btn {
+  background: var(--bg-subtle); border: none;
+  border-radius: 7px; width: 26px; height: 26px;
+  cursor: pointer; font-size: 0.9rem; color: var(--text-secondary);
+  transition: all .12s; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-sans);
+}
+.month-btn:hover:not(:disabled) { background: var(--border-strong); color: var(--text-primary); }
+.month-btn:disabled { opacity: .25; cursor: not-allowed; }
+.month-label-text { font-size: 0.875rem; color: var(--text-secondary); min-width: 110px; text-align: center; font-weight: 500; }
+
+/* Tithe alert */
+.tithe-alert {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--gold-light); border: 0.5px solid var(--gold);
+  border-radius: var(--radius-lg); padding: 11px 16px;
+  font-size: 0.855rem; color: var(--gold-text); flex-wrap: wrap;
+}
+.tithe-alert-icon { font-size: 0.9rem; flex-shrink: 0; }
+.tithe-alert span { flex: 1; }
+.tithe-alert-link { color: var(--gold); font-weight: 600; white-space: nowrap; font-size: 0.82rem; }
+
+/* Tithe mini cards */
+.tithe-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.tithe-mini-title { font-size: 0.75rem; color: var(--text-tertiary); font-weight: 500; margin-bottom: 2px; }
+.tithe-mini-amount {
+  font-size: 1.35rem; font-weight: 700;
+  color: var(--text-primary); letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Category rows */
+.cat-row { display: flex; align-items: center; gap: 10px; }
+.cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cat-info { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.cat-name { font-size: 0.78rem; color: var(--text-secondary); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cat-amounts { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; }
+.cat-spent { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; }
+.cat-budget { font-size: 0.68rem; color: var(--text-tertiary); }
+
+/* Transaction list */
+.txn-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px;
+}
+.txn-border { border-bottom: 0.5px solid var(--border); }
+.txn-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.txn-info { flex: 1; min-width: 0; }
+.txn-name { font-size: 0.875rem; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.txn-meta { display: flex; gap: 4px; margin-top: 1px; }
+.txn-date { font-size: 0.7rem; color: var(--text-tertiary); }
+.txn-member { font-size: 0.7rem; color: var(--text-tertiary); }
+.txn-amount { font-size: 0.9rem; font-weight: 600; flex-shrink: 0; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.txn-amount.income { color: var(--accent); }
+.txn-amount.expense { color: var(--danger); }
+.txn-delete {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-tertiary); font-size: 0.65rem; padding: 4px 6px;
+  border-radius: 6px; opacity: 0; transition: all 0.12s; flex-shrink: 0;
+}
+.txn-row:hover .txn-delete { opacity: 1; }
+.txn-delete:hover { background: var(--danger-light); color: var(--danger); }
+
+@media (max-width: 768px) {
+  .dashboard-content { padding: 14px 14px 28px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .hero-amount { font-size: 2.4rem; }
+}
+
+/* Month progress card */
+.month-progress-card { border-left: 3px solid var(--info); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+
+.mp-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px; flex-wrap: wrap;
+}
+.mp-title { font-size: .82rem; font-weight: 700; color: var(--text-primary); letter-spacing: -.01em; flex: 1; }
+.mp-days { font-size: .72rem; color: var(--text-tertiary); font-weight: 500; }
+.mp-status { font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+.mp-status.ok  { background: var(--accent-light); color: var(--accent-text); }
+.mp-status.warn { background: var(--warning-light); color: var(--warning); }
+
+.mp-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+
+.mp-bar-row { display: flex; align-items: center; gap: 10px; }
+.mp-bar-label { font-size: .72rem; color: var(--text-tertiary); min-width: 120px; font-weight: 500; }
+.mp-bar-track {
+  flex: 1; height: 8px; background: var(--bg-subtle);
+  border-radius: 99px; overflow: visible; position: relative;
+}
+.mp-bar-fill {
+  height: 100%; border-radius: 99px;
+  transition: width .8s cubic-bezier(.4,0,.2,1);
+}
+.mp-bar-fill.time { background: var(--info); opacity: .5; }
+.mp-bar-fill.spend { background: var(--accent); }
+.mp-bar-fill.spend.over { background: var(--danger); }
+
+/* Day marker — vertical line showing where today is */
+.mp-day-marker {
+  position: absolute; top: -4px;
+  width: 2px; height: 16px;
+  background: var(--text-tertiary);
+  border-radius: 99px;
+  transform: translateX(-50%);
+  opacity: .6;
+}
+
+.mp-bar-pct { font-size: .75rem; font-weight: 700; min-width: 32px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+
+.mp-projection {
+  display: flex; align-items: center; gap: 8px;
+  padding-top: 10px; border-top: .5px solid var(--border);
+  font-size: .8rem; flex-wrap: wrap;
+}
+.mp-proj-label { color: var(--text-tertiary); }
+.mp-proj-value { color: var(--accent); }
+.mp-proj-value.negative { color: var(--danger); }
+.mp-proj-value strong { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 480px) {
+  .mp-bar-label { min-width: 90px; font-size: .68rem; }
+}
+.txn-noncomputable {
+  font-size:.62rem; background:var(--info-light); color:var(--info);
+  padding:1px 5px; border-radius:99px; font-weight:600; margin-left:5px;
+}
+
+/* Tricolor progress card */
+.mp-three-nums {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+.mp-num {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+.mp-num-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.mp-num-dot.spent    { background: var(--danger); }
+.mp-num-dot.budgeted { background: #378ADD; }
+.mp-num-dot.libre    { background: var(--accent); }
+.mp-num-label {
+  font-size: .68rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 2px;
+}
+.mp-num-val {
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+.mp-num-val.spent    { color: var(--danger); }
+.mp-num-val.budgeted { color: #378ADD; }
+.mp-num-val.libre    { color: var(--accent); }
+
+.mp-tribar {
+  height: 8px;
+  border-radius: 99px;
+  overflow: hidden;
+  display: flex;
+  background: var(--bg-subtle);
+  margin-bottom: 10px;
+}
+.mp-seg { height: 100%; }
+.mp-seg.spent    { background: var(--danger); border-radius: 99px 0 0 99px; }
+.mp-seg.budgeted { background: #378ADD; }
+.mp-seg.libre    { background: var(--accent); border-radius: 0 99px 99px 0; }
+
+/* Dashboard header */
+.dash-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 28px 28px 0;
+  gap: 16px;
+}
+.dash-header-left { display: flex; flex-direction: column; gap: 4px; }
+.dash-family-name {
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.dash-greeting {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -.03em;
+  line-height: 1.1;
+}
+.dash-header-actions { display: flex; gap: 8px; align-items: center; padding-bottom: 4px; }
+.dash-month-nav { margin-top: 8px; }
+
+@media(max-width:768px) {
+  .dash-header { padding: 16px 14px 0; flex-wrap: wrap; }
+  .dash-greeting { font-size: 1.4rem; }
+}

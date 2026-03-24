@@ -1,0 +1,38 @@
+.perfil-page { min-height:100vh; }
+.perfil-content { padding:20px 28px 40px; display:flex; flex-direction:column; gap:14px; max-width:640px; }
+
+.perfil-hero { display:flex; align-items:center; gap:20px; }
+.perfil-avatar-wrap { display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0; }
+.perfil-avatar {
+  width:64px; height:64px; border-radius:50%;
+  background:var(--accent); color:#fff;
+  font-size:1.6rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+.perfil-avatar-hint { font-size:.65rem; color:var(--text-tertiary); text-align:center; max-width:80px; }
+.perfil-hero-info { flex:1; }
+.perfil-hero-name { font-size:1.3rem; font-weight:700; color:var(--text-primary); letter-spacing:-.03em; }
+.perfil-hero-email { font-size:.82rem; color:var(--text-tertiary); margin-top:2px; }
+.perfil-hero-meta { display:flex; align-items:center; gap:8px; margin-top:8px; font-size:.75rem; color:var(--text-secondary); }
+.perfil-role-badge { background:var(--accent-light); color:var(--accent-text); border-radius:99px; padding:2px 8px; font-weight:500; }
+
+.perfil-section-title { font-size:.875rem; font-weight:700; color:var(--text-primary); margin-bottom:6px; }
+.perfil-section-desc { font-size:.78rem; color:var(--text-tertiary); margin-bottom:10px; line-height:1.5; }
+
+.perfil-field-row { display:flex; gap:8px; align-items:center; }
+.perfil-input {
+  flex:1; background:var(--bg-input); border:.5px solid var(--border);
+  border-radius:var(--radius-sm); padding:10px 14px;
+  font-size:.875rem; color:var(--text-primary); font-family:var(--font-sans);
+}
+.perfil-input:focus { outline:2px solid var(--accent); outline-offset:-1px; border-color:transparent; }
+
+.perfil-email-display {
+  background:var(--bg-subtle); border-radius:var(--radius-sm);
+  padding:10px 14px; font-size:.875rem; color:var(--text-secondary);
+  font-family:monospace; letter-spacing:.02em;
+}
+
+.perfil-pw-form { display:flex; flex-direction:column; gap:10px; }
+
+@media(max-width:768px){ .perfil-content{padding:14px 14px 28px;} }

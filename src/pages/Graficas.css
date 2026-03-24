@@ -1,0 +1,28 @@
+.graficas-page { min-height:100vh; }
+.graficas-content { padding:20px 28px 40px; display:flex; flex-direction:column; gap:14px; max-width:860px; }
+.chart-section-title { font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); margin-bottom:12px; }
+.graficas-legend { display:flex; flex-direction:column; gap:6px; margin-top:12px; }
+.gl-item { display:flex; align-items:center; gap:8px; }
+.gl-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.gl-name { flex:1; font-size:.78rem; color:var(--text-secondary); }
+.gl-val { font-size:.8rem; font-weight:600; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+@media(max-width:768px){ .graficas-content{padding:14px 14px 28px;} }
+
+.balance-row { display:flex; align-items:center; gap:12px; padding:8px 0; flex-wrap:wrap; }
+.balance-item { flex:1; min-width:80px; text-align:center; }
+.bi-label { font-size:.7rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--text-tertiary); margin-bottom:4px; }
+.bi-value { font-size:1.3rem; font-weight:800; letter-spacing:-.03em; }
+.balance-sep { font-size:1.2rem; color:var(--text-tertiary); flex-shrink:0; }
+
+.proj-badge {
+  font-size:.68rem; font-weight:600; color:var(--text-tertiary);
+  background:var(--bg-subtle); border:.5px solid var(--border);
+  border-radius:99px; padding:2px 8px; letter-spacing:.01em;
+}
+.proj-note {
+  font-size:.75rem; color:var(--text-tertiary);
+  margin-top:10px; padding-top:10px;
+  border-top:.5px solid var(--border);
+  text-align:center;
+}
+.proj-note strong { color:var(--gold); }

@@ -1,0 +1,51 @@
+.ingresos-page { min-height:100vh; }
+.ingresos-content { padding:20px 28px 40px; display:flex; flex-direction:column; gap:14px; max-width:860px; }
+.ingresos-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.is-label { font-size:.7rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--text-tertiary); margin-bottom:4px; }
+.is-value { font-size:1.3rem; font-weight:800; color:var(--text-primary); letter-spacing:-.03em; }
+.is-value.accent { color:var(--accent); }
+.is-value.gold { color:var(--gold); }
+.income-row { display:flex; align-items:center; gap:12px; padding:14px 18px; }
+.income-border { border-bottom:.5px solid var(--border); }
+.income-icon { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.9rem; font-weight:700; flex-shrink:0; }
+.income-info { flex:1; min-width:0; }
+.income-source { font-size:.9rem; font-weight:600; color:var(--text-primary); }
+.income-no-tithe { font-size:.68rem; background:var(--bg-subtle); color:var(--text-tertiary); border-radius:4px; padding:1px 6px; margin-left:6px; }
+.income-meta { font-size:.72rem; color:var(--text-tertiary); margin-top:2px; display:flex; gap:5px; }
+.income-right { display:flex; align-items:center; gap:8px; }
+.income-amount { font-size:.95rem; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; }
+.income-del { background:none; border:none; cursor:pointer; color:var(--text-tertiary); font-size:.75rem; padding:4px 6px; border-radius:4px; }
+.income-del:hover { background:var(--danger-light); color:var(--danger); }
+.income-cat-grid { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+.income-cat-btn { background:var(--bg-subtle); border:.5px solid var(--border); border-radius:var(--radius-sm); padding:7px 12px; font-size:.78rem; color:var(--text-secondary); cursor:pointer; font-family:var(--font-sans); transition:all .15s; }
+.income-cat-btn.active { background:var(--accent-light); border-color:var(--accent); color:var(--accent-text); font-weight:600; }
+
+.computable-toggle { display:flex; align-items:center; justify-content:space-between; background:var(--bg-subtle); border-radius:var(--radius-md); padding:12px 16px; gap:12px; }
+.ct-left { flex:1; }
+.ct-title { font-size:.875rem; font-weight:600; color:var(--text-primary); }
+.ct-desc  { font-size:.75rem; color:var(--text-tertiary); margin-top:2px; }
+.ct-switch { position:relative; width:46px; height:26px; border-radius:99px; border:none; cursor:pointer; flex-shrink:0; transition:background .2s; padding:0; }
+.ct-switch.on  { background:var(--accent); }
+.ct-switch.off { background:var(--border-strong); }
+.ct-thumb { position:absolute; width:20px; height:20px; background:#fff; border-radius:50%; top:3px; transition:left .2s; pointer-events:none; }
+.ct-switch.on  .ct-thumb { left:23px; }
+.ct-switch.off .ct-thumb { left:3px; }
+.tithe-preview { background:var(--gold-light); border-radius:var(--radius-md); padding:12px 16px; margin-top:8px; }
+.tithe-preview-title { font-size:.75rem; font-weight:600; color:var(--gold-text); margin-bottom:6px; }
+.tithe-preview-row { display:flex; justify-content:space-between; font-size:.82rem; color:var(--text-secondary); }
+.tithe-preview-amount { font-weight:700; color:var(--gold); }
+@media(max-width:768px){
+  .ingresos-content{padding:14px 14px 28px;}
+  .ingresos-summary{grid-template-columns:1fr 1fr;}
+}
+
+.income-cat-hint {
+  font-size: .75rem;
+  color: var(--text-tertiary);
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  margin-top: 6px;
+  line-height: 1.4;
+  width: 100%;
+}
