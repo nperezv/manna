@@ -22,7 +22,7 @@ export default function Ajustes() {
   const navigate = useNavigate()
 
   const [familyData, setFamilyData]   = useState(null)
-  const [members, setMembers]         = useState([])
+  const [members, setMembers]          = useState([])
   const [invitations, setInvitations] = useState([])
   const [catRules, setCatRules]       = useState(() => {
     try { return JSON.parse(localStorage.getItem('manna_cat_rules') || '[]') } catch { return [] }
@@ -104,8 +104,8 @@ export default function Ajustes() {
       setInvitations(invs)
       setForm(f => ({
         ...f,
-        name:                  fam.name || '',
-        tithe_percent:         fam.tithe_percent || 10,
+        name:                   fam.name || '',
+        tithe_percent:          fam.tithe_percent || 10,
         fast_offering_percent: fam.fast_offering_percent || 2,
         fast_offering_fixed:   fam.fast_offering_fixed || '',
         church_bank_reference: fam.church_bank_reference || '',
@@ -118,7 +118,7 @@ export default function Ajustes() {
   const handleSave = async () => {
     await api.family.update({
       name:                  form.name,
-      tithe_percent:         parseFloat(form.tithe_percent) || 10,
+      tithe_percent:          parseFloat(form.tithe_percent) || 10,
       fast_offering_percent: parseFloat(form.fast_offering_percent) || 2,
       fast_offering_fixed:   form.fast_offering_fixed ? parseFloat(form.fast_offering_fixed) : null,
       church_bank_reference: form.church_bank_reference.trim().toUpperCase(),
@@ -330,7 +330,7 @@ export default function Ajustes() {
                         <div style={{fontSize:'.75rem',color:'var(--text-secondary)'}}>→</div>
                         <div style={{fontSize:'.75rem',color:'var(--text-secondary)'}}>
                           {SUBCATEGORIES.find(s => s.id===rule.categoryId)?.name ||
-                           PARENT_CATEGORIES.find(c => c.id===rule.categoryId)?.name || rule.categoryId}
+                            PARENT_CATEGORIES.find(c => c.id===rule.categoryId)?.name || rule.categoryId}
                         </div>
                         <button style={{background:'none',border:'none',cursor:'pointer',color:'var(--danger)',fontSize:'.75rem'}}
                           onClick={() => removeCatRule(rule.id)}>✕</button>
@@ -418,15 +418,15 @@ export default function Ajustes() {
                   <div style={{display:'flex',flexDirection:'column',gap:4}}>
                     {institutions.map(inst => (
                       <button 
-                          key={inst.name} 
-                          className="bank-pick-btn"
-                          onClick={() => {
-                            const technicalId = inst.aspsp_name || inst.name; 
-                            console.log("Datos del banco:", inst); // Mira esto en F12 en tu navegador
-                            connectBank(technicalId); 
-                          }}
-                        >
-                          {inst.name}
+                        key={inst.aspsp_name || inst.name} 
+                        className="bank-pick-btn"
+                        onClick={() => {
+                          const technicalId = inst.aspsp_name || inst.name; 
+                          console.log("Enviando ID técnico:", technicalId);
+                          connectBank(technicalId); 
+                        }}
+                      >
+                        {inst.name}
                       </button>
                     ))}
                   </div>
