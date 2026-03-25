@@ -35,6 +35,54 @@ export default function Ajustes() {
   const [inviteMsg, setInviteMsg]     = useState('')
   const [newRule, setNewRule]         = useState({ pattern: '', categoryId: 301 })
 
+  // Bank state
+  const [bankConnections, setBankConnections] = useState([])
+  const [institutions, setInstitutions]       = useState([])
+  const [bankLoading, setBankLoading]         = useState(false)
+  const [syncing, setSyncing]                 = useState(false)
+  const [showBankPicker, setShowBankPicker]   = useState(false)
+
+  useEffect(() => {
+    api.bank.status().then(setBankConnections).catch(() => {})
+  }, [])
+
+  const loadInstitutions = async () => {
+    if (institutions.length) { setShowBankPicker(true); return }
+    setBankLoading(true)
+    try {
+      const data = await api.bank.institutions('ES')
+      setInstitutions(data || [])
+      setShowBankPicker(true)
+    } catch(err) { alert('Error al cargar bancos: ' + err.message) }
+    finally { setBankLoading(false) }
+  }
+
+  const connectBank = async (institutionId) => {
+    setShowBankPicker(false)
+    setBankLoading(true)
+    try {
+      const { auth_url } = await api.bank.connect({ institution_id: institutionId })
+      window.location.href = auth_url
+    } catch(err) { alert('Error: ' + err.message) }
+    finally { setBankLoading(false) }
+  }
+
+  const syncBank = async () => {
+    setSyncing(true)
+    try {
+      const { synced } = await api.bank.sync()
+      alert(`✓ ${synced} movimientos importados`)
+      setBankConnections(await api.bank.status())
+    } catch(err) { alert('Error al sincronizar: ' + err.message) }
+    finally { setSyncing(false) }
+  }
+
+  const disconnectBank = async (id) => {
+    if (!window.confirm('¿Desconectar este banco?')) return
+    await api.bank.disconnect(id)
+    setBankConnections(await api.bank.status())
+  }
+
   const [form, setForm] = useState({
     name: '',
     tithe_percent: 10,
