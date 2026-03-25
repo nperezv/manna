@@ -90,6 +90,11 @@ export default function Login() {
             <button type="submit" className="auth-submit" disabled={loading}>
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
+            <div className="auth-footer">
+              <a href="/registro" style={{color:'var(--accent)',fontWeight:600,textDecoration:'none'}}>
+                ¿Primera vez? Crear cuenta familiar
+              </a>
+            </div>
           </form>
         ) : (
           <form onSubmit={handleRegister} className="auth-form">
@@ -128,12 +133,6 @@ export default function Login() {
             </button>
           </form>
         )}
-      </div>
-    <div className="auth-footer">
-        ¿Primera vez?{' '}
-        <a href="/registro" style={{color:'var(--accent)',fontWeight:600,textDecoration:'none'}}>
-          Crear cuenta familiar
-        </a>
       </div>
     </div>
   )

@@ -206,7 +206,7 @@
 .ob-btn-back:hover { background: var(--border); }
 .ob-btn-next {
   flex: 1;
-  background: var(--gold);
+  background: var(--accent);
   border: none;
   border-radius: var(--radius-md);
   padding: 14px 20px;
@@ -219,7 +219,7 @@
   letter-spacing: -.01em;
 }
 .ob-btn-next:hover:not(:disabled) {
-  background: #c9922e;
+  background: var(--accent-hover);
   transform: translateY(-1px);
 }
 .ob-btn-next:disabled {
