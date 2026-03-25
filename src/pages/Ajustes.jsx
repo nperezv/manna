@@ -421,8 +421,9 @@ export default function Ajustes() {
                           key={inst.name} 
                           className="bank-pick-btn"
                           onClick={() => {
-                            console.log("Banco seleccionado completo:", inst); // Mira esto en la consola del navegador (F12)
-                            connectBank(inst.name); 
+                            const technicalId = inst.aspsp_name || inst.name; 
+                            console.log("Datos del banco:", inst); // Mira esto en F12 en tu navegador
+                            connectBank(technicalId); 
                           }}
                         >
                           {inst.name}
