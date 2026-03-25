@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useBudget, useExpenses, useApi } from '../hooks/useData'
+import { useFamilySocket } from '../hooks/useSocket'
 import { Card, ProgressBar, Badge, PageHeader } from '../components/ui'
 import MonthNav from '../components/ui/MonthNav'
 import AddDonationModal from '../components/modals/AddDonationModal'
@@ -79,6 +80,13 @@ export default function Presupuesto() {
   }, 0)
   const totalSpent = PARENT_CATEGORIES.reduce((s, c) => s + getSpent(c.id), 0)
 
+  // Real-time sync via WebSockets
+  useFamilySocket({
+    onExpense: () => expenses?.refetch?.(),
+    onBudget:  () => budget?.refetch?.(),
+    onIncome:  () => {},
+  })
+
   // Custom subs from DB — shared across family
   const { data: allCustomSubs, refetch: refetchCustomSubs } = useApi(() => api.budget.customSubs(), [])
   const getCustomSubs = (catId) => (allCustomSubs || [])
@@ -130,9 +138,22 @@ export default function Presupuesto() {
   }
 
   const handleSubBudget = async (subId, amount, parentId) => {
-    await setSubcategory(subId, amount)
+    const isCustom = typeof subId === 'string' && subId.includes('-') // UUID = custom sub
+    if (isCustom) {
+      // Custom sub — update budgeted directly on custom_subcategories
+      await api.budget.updateCustomSub(subId, { budgeted: amount })
+      await refetchCustomSubs()
+    } else {
+      // System sub — use subcategory_budgets table
+      await setSubcategory(subId, amount)
+    }
+    // Recalc parent total
     const allSubs = [...SUBCATEGORIES.filter(s => s.parentId === parentId && !hiddenSubs.has(s.id)), ...getCustomSubs(parentId)]
-    const newParent = allSubs.reduce((sum, s) => sum + (s.id === subId ? amount : (subBudgetMap[s.id] || 0)), 0)
+    const newParent = allSubs.reduce((sum, s) => {
+      if (s.id === subId) return sum + amount
+      if (typeof s.id === 'string' && s.id.includes('-')) return sum + (s.budgeted || 0) // custom sub
+      return sum + (subBudgetMap[s.id] || 0) // system sub
+    }, 0)
     await setCategory(parentId, newParent)
     setEditingSub(null)
   }
@@ -340,7 +361,7 @@ export default function Presupuesto() {
                         <div className="bcat-subs">
                           {allSubs.map(sub => {
                             const subSpent    = expenses.filter(e => e.category_id === sub.id).reduce((s,e)=>s+parseFloat(e.amount),0)
-                            const subBudget   = subBudgetMap[sub.id] || 0
+                            const subBudget   = (typeof sub.id === 'string' && sub.id.includes('-')) ? (sub.budgeted || 0) : (subBudgetMap[sub.id] || 0)
                             const isEditingSub  = editingSub === sub.id
                             const isRenamingSub = renamingSub?.id === sub.id
 
@@ -575,7 +596,7 @@ export default function Presupuesto() {
       {customSubModal && (
         <AddCustomSubModal parentId={customSubModal.parentId} parentName={customSubModal.parentName} parentColor={customSubModal.parentColor}
           onClose={() => setCustomSubModal(null)}
-          onAdded={() => { setCustomSubModal(null); setExpandedCats(prev => new Set(prev)) }}/>
+          onAdded={() => { setCustomSubModal(null); refetchCustomSubs() }}/>
       )}
     </div>
   )
