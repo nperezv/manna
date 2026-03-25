@@ -79,6 +79,7 @@ export default function Dashboard() {
   // Projection: if you stick to your budget, here's how the month ends
   const debtMonthly      = d?.debts?.monthlyTotal || 0
   const donationsMonthly = d?.donationsMonthly || 0
+  const donationsList    = d?.donationsList || []
   const totalPlanned     = budgetTotal + (tithe.owed || 0) + (tithe.fastOwed || 0) + debtMonthly + donationsMonthly
   const projected     = totalPlanned > 0 ? income - totalPlanned : (income - spent)
   const dayOfMonth  = daysPassed
@@ -281,6 +282,34 @@ export default function Dashboard() {
             {tithe.fastOwed > 0 && <ProgressBar value={tithe.fastPaid||0} max={tithe.fastOwed} variant="gold"/>}
           </Card>
         </div>
+
+        {/* Donaciones extras */}
+        {donationsList.length > 0 && (
+          <div className="grid-2">
+            {donationsList.map(don => {
+              const pending = Math.max(don.budgeted - don.paid, 0)
+              const isAlDia = don.budgeted > 0 && don.paid >= don.budgeted
+              return (
+                <Card key={don.id} padding="compact">
+                  <div className="tithe-row">
+                    <div>
+                      <div className="tithe-mini-title" style={{color: don.color || 'var(--gold)'}}>{don.name}</div>
+                      <div className="tithe-mini-amount" style={{color: don.color || 'var(--gold)'}}>
+                        {don.budgeted > 0 ? formatCurrency(don.budgeted) : '—'}
+                      </div>
+                    </div>
+                    {don.budgeted > 0 && (
+                      <Badge variant={isAlDia ? 'success' : don.paid > 0 ? 'warning' : 'default'}>
+                        {isAlDia ? 'Al día' : don.paid > 0 ? `Falta ${formatCurrency(pending)}` : 'Pendiente'}
+                      </Badge>
+                    )}
+                  </div>
+                  {don.budgeted > 0 && <ProgressBar value={don.paid} max={don.budgeted} variant="gold"/>}
+                </Card>
+              )
+            })}
+          </div>
+        )}
 
         {/* Budget top categories */}
         {topCats.length > 0 && (
