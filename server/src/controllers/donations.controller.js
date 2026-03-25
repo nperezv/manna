@@ -74,4 +74,23 @@ const payDonation = async (req, res) => {
   } finally { client.release() }
 }
 
-module.exports = { getDonations, createDonation, deleteDonation, payDonation }
+const updateDonation = async (req, res) => {
+  const { id } = req.params
+  const { name, budgeted, color } = req.body
+  try {
+    const result = await pool.query(
+      `UPDATE donations SET
+        name     = COALESCE($1, name),
+        budgeted = COALESCE($2, budgeted),
+        color    = COALESCE($3, color)
+       WHERE id=$4 AND family_id=$5 RETURNING *`,
+      [name||null, budgeted!=null?budgeted:null, color||null, id, req.user.familyId]
+    )
+    req.app.get('emitToFamily')?.(req.user.familyId, 'data_changed', { type: 'donation' })
+    return res.json(result.rows[0])
+  } catch (err) {
+    return res.status(500).json({ error: 'Error al actualizar donación' })
+  }
+}
+
+module.exports = { getDonations, createDonation, updateDonation, deleteDonation, payDonation }
