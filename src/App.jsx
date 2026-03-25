@@ -16,6 +16,7 @@ import Ajustes from './pages/Ajustes'
 import Unirse from './pages/Unirse'
 import Perfil from './pages/Perfil'
 import Join from './pages/Join'
+import BankCallback from './pages/BankCallback'
 
 // Loading splash
 function LoadingSplash() {
@@ -88,6 +89,7 @@ export default function App() {
           <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/unirse"   element={<Unirse />} />
           <Route path="/unirse"   element={<JoinRoute />} />
+          <Route path="/bank/callback" element={<BankCallback />} />
           <Route path="/*"        element={<ProtectedRoutes />} />
         </Routes>
       </AuthProvider>
