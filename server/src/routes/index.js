@@ -87,7 +87,8 @@ router.post('/savings/:id/add', savingsCtrl.addToGoal)
 router.get('/donations',          donationsCtrl.getDonations)
 router.post('/donations',         donationsCtrl.createDonation)
 router.delete('/donations/:id',   donationsCtrl.deleteDonation)
-router.post('/donations/:id/pay', donationsCtrl.payDonation)
+router.patch('/donations/:id',    donationsCtrl.updateDonation)
+router.post('/donations/:id/pay',  donationsCtrl.payDonation)
 
 // Profile
 router.patch('/profile',          profileCtrl.updateProfile)
