@@ -21,6 +21,7 @@ const createDonation = async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
       [req.user.familyId, name, color, bank_channel, bank_pattern, budgeted]
     )
+    req.app.get('emitToFamily')?.(req.user.familyId, 'data_changed', { type: 'donation' })
     return res.status(201).json(result.rows[0])
   } catch (err) {
     return res.status(500).json({ error: 'Error al crear donación' })
@@ -65,6 +66,7 @@ const payDonation = async (req, res) => {
        amount, date || new Date().toISOString().split('T')[0]]
     )
     await client.query('COMMIT')
+    req.app.get('emitToFamily')?.(req.user.familyId, 'data_changed', { type: 'donation' })
     return res.status(201).json(payment.rows[0])
   } catch (err) {
     await client.query('ROLLBACK')
