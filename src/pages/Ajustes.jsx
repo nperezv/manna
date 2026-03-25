@@ -51,7 +51,7 @@ export default function Ajustes() {
     setBankLoading(true)
     try {
       const data = await api.bank.institutions('ES')
-      setInstitutions(data || [])
+      setInstitutions(data.aspsps || [])
       setShowBankPicker(true)
     } catch(err) { alert('Error al cargar bancos: ' + err.message) }
     finally { setBankLoading(false) }
