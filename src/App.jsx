@@ -43,7 +43,7 @@ function LoadingSplash() {
 function ProtectedRoutes() {
   const { user, loading } = useAuth()
   if (loading) return <LoadingSplash />
-  if (!user) return <Navigate to="/registro" replace />
+  if (!user) return <Navigate to="/bienvenida" replace />
 
   return (
     <Layout>
@@ -93,7 +93,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/bienvenida" element={<Landing />} />
+          <Route path="/bienvenida" element={<RootRoute />} />
           <Route path="/registro" element={<PublicRoute><Onboarding /></PublicRoute>} />
           <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/unirse"   element={<Unirse />} />
