@@ -97,7 +97,9 @@ export default function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-brand">
         <div className="sidebar-logo">
-          <span className="sidebar-logo-m">m</span>
+          <svg viewBox="0 0 22 22" fill="none">
+            <path d="M2 19 L2 5 L11 12 L20 5 L20 19 Z" fill="white"/>
+          </svg>
         </div>
         <div className="sidebar-brand-text">
           <span className="sidebar-appname">manna</span>

@@ -20,30 +20,30 @@
   flex-shrink: 0;
 }
 .sidebar-logo {
-  width: 32px; height: 32px;
-  background: var(--gold);
-  border-radius: 8px;
+  width: 36px; height: 36px;
+  background: #34c759;
+  border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
 }
-.sidebar-logo-m {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: 1.2rem;
-  color: #fff;
-  font-weight: 400;
-  line-height: 1;
-}
+.sidebar-logo svg { width: 22px; height: 22px; }
 .sidebar-brand-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .sidebar-appname {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: .95rem;
+  font-family: var(--font-brand, 'Poppins', sans-serif);
+  font-size: .88rem;
+  font-weight: 200;
   color: var(--text-primary);
-  letter-spacing: -.01em;
-  line-height: 1;
+  letter-spacing: .54em;
+  line-height: 1.1;
 }
 .sidebar-subtitle {
-  font-size: .67rem;
+  font-family: var(--font-brand, 'Poppins', sans-serif);
+  font-size: .58rem;
+  font-weight: 300;
   color: var(--text-tertiary);
+  letter-spacing: .155em;
+  text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
