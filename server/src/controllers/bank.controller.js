@@ -62,7 +62,7 @@ const connectBank = async (req, res) => {
     const client = apiClient()
 
     // 1. Create end-user agreement
-    const { data: agreement } = await client.post('/consents/', {
+    const { data: agreement } = await client.post('/v2/consents/', {
       access: { valid_until: new Date(Date.now() + 90*24*3600*1000).toISOString().split('T')[0] },
       aspsp: { name: institution_id, country: 'ES' },
       state: `${familyId}:${userId}`,
