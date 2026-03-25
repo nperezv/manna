@@ -311,6 +311,76 @@ export default function Ajustes() {
           </>
         )}
 
+        {/* ── BANCO ── */}
+        <Section title="Conexión bancaria">
+          <Card>
+            {bankConnections.filter(c => c.status === 'active').length === 0 ? (
+              <div style={{display:'flex',flexDirection:'column',gap:10}}>
+                <div style={{fontSize:'.875rem',color:'var(--text-secondary)'}}>
+                  Conecta tu banco para importar movimientos automáticamente.
+                </div>
+                <Button size="sm" onClick={loadInstitutions} disabled={bankLoading}>
+                  {bankLoading ? 'Cargando...' : '+ Conectar banco'}
+                </Button>
+              </div>
+            ) : (
+              <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                {bankConnections.filter(c => c.status === 'active').map(conn => (
+                  <div key={conn.id} style={{display:'flex',alignItems:'center',gap:10,justifyContent:'space-between'}}>
+                    <div>
+                      <div style={{fontWeight:600,color:'var(--text-primary)',fontSize:'.875rem'}}>{conn.institution_id}</div>
+                      {conn.accounts?.[0]?.last_synced && (
+                        <div style={{fontSize:'.72rem',color:'var(--text-tertiary)'}}>
+                          Última sync: {new Date(conn.accounts[0].last_synced).toLocaleDateString('es-ES')}
+                        </div>
+                      )}
+                      {(conn.accounts || []).filter(a => a.iban).map(acc => (
+                        <div key={acc.id} style={{fontSize:'.72rem',color:'var(--text-tertiary)'}}>{acc.iban}</div>
+                      ))}
+                    </div>
+                    <div style={{display:'flex',gap:6}}>
+                      <Button size="sm" onClick={syncBank} disabled={syncing}>
+                        {syncing ? '...' : '↺ Sync'}
+                      </Button>
+                      <button style={{background:'none',border:'none',cursor:'pointer',color:'var(--danger)',fontSize:'.75rem'}}
+                        onClick={() => disconnectBank(conn.id)}>Desconectar</button>
+                    </div>
+                  </div>
+                ))}
+                <Button size="sm" variant="secondary" onClick={loadInstitutions} disabled={bankLoading}>
+                  + Añadir otro banco
+                </Button>
+              </div>
+            )}
+          </Card>
+        </Section>
+
+        {/* Bank picker modal */}
+        {showBankPicker && (
+          <div className="modal-backdrop" onClick={() => setShowBankPicker(false)}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <div className="modal-title">Selecciona tu banco</div>
+                <button className="modal-close" onClick={() => setShowBankPicker(false)}>✕</button>
+              </div>
+              <div className="modal-body" style={{maxHeight:'60vh',overflowY:'auto'}}>
+                {institutions.length === 0 ? (
+                  <div style={{textAlign:'center',color:'var(--text-tertiary)',padding:20}}>Cargando bancos...</div>
+                ) : (
+                  <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                    {institutions.map(inst => (
+                      <button key={inst.id || inst.name} className="bank-pick-btn"
+                        onClick={() => connectBank(inst.id || inst.name)}>
+                        {inst.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── PREFERENCIAS DE USUARIO ── */}
         <Section title="Preferencias">
           <Card>

@@ -28,3 +28,22 @@
 .ajustes-reset-desc { font-size: .75rem; color: var(--text-tertiary); }
 
 @media(max-width:768px) { .ajustes-content{padding:14px 14px 28px;} }
+
+.bank-pick-btn {
+  background: var(--bg-subtle);
+  border: .5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: .875rem;
+  color: var(--text-primary);
+  transition: all .12s;
+  width: 100%;
+}
+.bank-pick-btn:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
