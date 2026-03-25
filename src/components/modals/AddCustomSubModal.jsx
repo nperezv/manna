@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { api } from '../../api/client'
 import { Button } from '../ui'
 import './Modal.css'
 
@@ -10,25 +11,15 @@ const BANK_CHANNELS = [
   { value: 'cash',          label: 'Efectivo'           },
 ]
 
-// Generate a variant of the parent color (lighter/darker shade)
 function colorVariant(hex, index) {
   if (!hex) return '#4a9fd4'
-  // Parse hex
   const r = parseInt(hex.slice(1,3), 16)
   const g = parseInt(hex.slice(3,5), 16)
   const b = parseInt(hex.slice(5,7), 16)
-  // Each custom sub gets a slightly different lightness
-  const factor = 0.7 + (index % 4) * 0.1 // 0.7, 0.8, 0.9, 1.0
+  const factor = 0.7 + (index % 4) * 0.1
   const mix = (c) => Math.min(255, Math.round(c * factor + (255 - 255 * factor) * 0.4))
   const toHex = (c) => c.toString(16).padStart(2, '0')
   return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`
-}
-
-function getNextVariantIndex(parentId) {
-  try {
-    const existing = JSON.parse(localStorage.getItem(`manna_custom_subs_${parentId}`) || '[]')
-    return existing.length
-  } catch { return 0 }
 }
 
 export default function AddCustomSubModal({ parentId, parentName, parentColor, onClose, onAdded }) {
@@ -38,26 +29,29 @@ export default function AddCustomSubModal({ parentId, parentName, parentColor, o
     bankChannel: 'transfer',
     bankPattern: '',
   })
+  const [saving, setSaving] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.name.trim()) return
-    const key = `manna_custom_subs_${parentId}`
-    const existing = JSON.parse(localStorage.getItem(key) || '[]')
-    const color = colorVariant(parentColor, existing.length)
-    const newSub = {
-      id: Date.now(),
-      name: form.name.trim(),
-      color,
-      parentId,
-      budgeted: parseFloat(form.budgeted) || 0,
-      bankChannel: form.bankChannel,
-      bankPattern: form.bankPattern.trim(),
-      custom: true,
-    }
-    localStorage.setItem(key, JSON.stringify([...existing, newSub]))
-    onAdded?.(newSub)
-    onClose()
+    setSaving(true)
+    try {
+      // Get existing count for color variant index
+      const existing = await api.budget.customSubs(parentId)
+      const color = colorVariant(parentColor, existing.length)
+      const newSub = await api.budget.createCustomSub({
+        name:         form.name.trim(),
+        color,
+        parent_id:    parentId,
+        pillar:       1,
+        bank_channel: form.bankChannel,
+        bank_pattern: form.bankPattern.trim(),
+        budgeted:     parseFloat(form.budgeted) || 0,
+      })
+      onAdded?.(newSub)
+      onClose()
+    } catch(err) { alert(err.message) }
+    finally { setSaving(false) }
   }
 
   return (
@@ -109,7 +103,7 @@ export default function AddCustomSubModal({ parentId, parentName, parentColor, o
           </div>
           <div className="modal-footer">
             <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-            <Button type="submit">Añadir</Button>
+            <Button type="submit" disabled={saving}>{saving ? 'Guardando...' : 'Añadir'}</Button>
           </div>
         </form>
       </div>
