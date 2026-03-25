@@ -24,6 +24,7 @@ const createDebt = async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
       [req.user.familyId, name, total_amount, remaining, monthly_payment, interest_rate, type]
     )
+    req.app.get('emitToFamily')?.(req.user.familyId, 'data_changed', { type: 'debt' })
     return res.status(201).json(result.rows[0])
   } catch (err) {
     console.error('createDebt error:', err)

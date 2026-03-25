@@ -83,6 +83,7 @@ const registerPayment = async (req, res) => {
       )
     }
     await client.query('COMMIT')
+    req.app.get('emitToFamily')?.(req.user.familyId, 'data_changed', { type: 'tithe' })
     return res.status(201).json({ tithePayment, fastPayment })
   } catch (err) {
     await client.query('ROLLBACK')

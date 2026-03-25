@@ -21,6 +21,7 @@ const createGoal = async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
       [req.user.familyId, name, target, saved, deadline || null, color]
     )
+    req.app.get('emitToFamily')?.(req.user.familyId, 'data_changed', { type: 'savings' })
     return res.status(201).json(result.rows[0])
   } catch (err) {
     return res.status(500).json({ error: 'Error al crear meta' })
