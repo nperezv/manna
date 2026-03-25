@@ -55,6 +55,7 @@ const getInstitutions = async (req, res) => {
 const connectBank = async (req, res) => {
   const { institution_id } = req.body
   const { userId, familyId } = req.user
+  console.log("DEBUG -> ID RECIBIDO DEL FRONTEND:", institution_id);
   if (!institution_id) return res.status(400).json({ error: 'institution_id requerido' })
 
   try {
