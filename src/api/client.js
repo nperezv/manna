@@ -116,6 +116,7 @@ export const api = {
   donations: {
     list:   ()       => get('/donations'),
     create: (b)      => post('/donations', b),
+    update: (id, b)  => patch(`/donations/${id}`, b),
     delete: (id)     => del(`/donations/${id}`),
     pay:    (id, b)  => post(`/donations/${id}/pay`, b),
   },
