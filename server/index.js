@@ -1,15 +1,45 @@
 require('dotenv').config()
 const express = require('express')
-const cors = require('cors')
-const helmet = require('helmet')
+const cors    = require('cors')
+const helmet  = require('helmet')
 const rateLimit = require('express-rate-limit')
+const http    = require('http')
+const { Server } = require('socket.io')
 
 const routes = require('./src/routes')
-const pool = require('./src/db/pool')
+const pool   = require('./src/db/pool')
 
-const app = express()
-const PORT = process.env.PORT || 3001
+const app    = express()
+const server = http.createServer(app)
+const PORT   = process.env.PORT || 3001
 
+// ── Socket.io ────────────────────────────────────────────────
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+  }
+})
+
+// Make io accessible in controllers via app.get('io')
+app.set('io', io)
+
+io.on('connection', (socket) => {
+  // Client joins their family room
+  socket.on('join_family', (familyId) => {
+    if (familyId) {
+      socket.join(`family-${familyId}`)
+    }
+  })
+  socket.on('disconnect', () => {})
+})
+
+// Helper — emit to all family members (used in controllers)
+app.set('emitToFamily', (familyId, event, data) => {
+  io.to(`family-${familyId}`).emit(event, data)
+})
+
+// ── Express middleware ────────────────────────────────────────
 app.use(helmet())
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
@@ -39,7 +69,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor' })
 })
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`
   ✦ Manna API running
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
