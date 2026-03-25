@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useFamilySocket } from '../hooks/useSocket'
 import { useDashboard, useIncomes, useExpenses } from '../hooks/useData'
 import { Card, Button, Badge, ProgressBar, PageHeader, EmptyState } from '../components/ui'
 import { formatCurrency, formatShortDate, getMonthLabel, getCurrentMonth } from '../utils/helpers'
