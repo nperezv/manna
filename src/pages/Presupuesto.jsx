@@ -78,7 +78,9 @@ export default function Presupuesto() {
     if (c.id === 10) return s + totalDebtPayment
     return s + (budgetMap[c.id] || 0)
   }, 0)
-  const totalSpent = PARENT_CATEGORIES.reduce((s, c) => s + getSpent(c.id), 0)
+  const totalSpent    = PARENT_CATEGORIES.reduce((s, c) => s + getSpent(c.id), 0)
+  const monthIncome   = budget?.computableIncome || 0
+  const sinAsignar    = monthIncome - totalBudgeted
 
   // Real-time sync via WebSockets
   useFamilySocket({
@@ -206,6 +208,15 @@ export default function Presupuesto() {
 
         <Card>
           <div className="budget-summary">
+            {monthIncome > 0 && (
+              <>
+                <div className="budget-summary-item">
+                  <div className="bs-label">Ingresos</div>
+                  <div className="bs-value accent">{formatCurrency(monthIncome)}</div>
+                </div>
+                <div className="budget-summary-divider"/>
+              </>
+            )}
             <div className="budget-summary-item">
               <div className="bs-label">Presupuestado</div>
               <div className="bs-value">{formatCurrency(totalBudgeted)}</div>
@@ -215,13 +226,17 @@ export default function Presupuesto() {
               <div className="bs-label">Gastado</div>
               <div className="bs-value danger">{formatCurrency(totalSpent)}</div>
             </div>
-            <div className="budget-summary-divider"/>
-            <div className="budget-summary-item">
-              <div className="bs-label">Disponible</div>
-              <div className={`bs-value ${totalBudgeted-totalSpent < 0 ? 'danger' : 'accent'}`}>
-                {formatCurrency(totalBudgeted - totalSpent)}
-              </div>
-            </div>
+            {monthIncome > 0 && (
+              <>
+                <div className="budget-summary-divider"/>
+                <div className="budget-summary-item">
+                  <div className="bs-label">Sin asignar</div>
+                  <div className={`bs-value ${sinAsignar < 0 ? 'danger' : 'accent'}`}>
+                    {formatCurrency(sinAsignar)}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </Card>
 

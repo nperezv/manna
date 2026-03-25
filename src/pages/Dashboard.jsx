@@ -77,7 +77,8 @@ export default function Dashboard() {
   const spentPct    = budgetTotal > 0 ? (discretionarySpent / budgetTotal) * 100 : income > 0 ? (discretionarySpent / income) * 100 : 0
   const onTrack     = spentPct <= monthPct + 5
   // Projection: if you stick to your budget, here's how the month ends
-  const totalPlanned  = budgetTotal + (tithe.owed || 0) + (tithe.fastOwed || 0)
+  const debtMonthly   = d?.debts?.monthlyTotal || 0
+  const totalPlanned  = budgetTotal + (tithe.owed || 0) + (tithe.fastOwed || 0) + debtMonthly
   const projected     = totalPlanned > 0 ? income - totalPlanned : (income - spent)
   const dayOfMonth  = daysPassed
   const daysInMonth = totalDays
@@ -172,7 +173,7 @@ export default function Dashboard() {
 
         {/* Month progress */}
         {isCurrentMonth && income > 0 && (() => {
-          const totalPlan   = budgetTotal + (tithe.owed||0) + (tithe.fastOwed||0)
+          const totalPlan   = budgetTotal + (tithe.owed||0) + (tithe.fastOwed||0) + debtMonthly
           const budgetRem   = Math.max(totalPlan - spent, 0)
           const libre       = Math.max(income - Math.max(totalPlan, spent), 0)
           const spentW      = income > 0 ? Math.min((spent    / income) * 100, 100) : 0
