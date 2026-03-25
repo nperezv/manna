@@ -40,6 +40,8 @@ export default function Presupuesto() {
   const [renameVal, setRenameVal]     = useState('')
   const [expandedCats, setExpandedCats] = useState(new Set())
   const [showDonationModal, setShowDonationModal] = useState(false)
+  const [editingDonation, setEditingDonation]   = useState(null)
+  const [editDonVal, setEditDonVal]             = useState('')
   const [customSubModal, setCustomSubModal]       = useState(null)
   const [distDialog, setDistDialog]               = useState(null)
   const [suggestDialog, setSuggestDialog]         = useState(null)
@@ -50,7 +52,7 @@ export default function Presupuesto() {
   })
 
   const { budget, loading, setCategory, setSubcategory } = useBudget(month)
-  const { donations, refetch: refetchDonations } = useDonations()
+  const { donations, refetch: refetchDonations, deleteDonation } = useDonations()
   const { expenses } = useExpenses(month)
 
   const toggleExpand = (id) => setExpandedCats(prev => {
@@ -472,13 +474,24 @@ export default function Presupuesto() {
                   const donSpent = expenses.filter(e => e.is_donation && e.description?.includes(don.name))
                     .reduce((s, e) => s + parseFloat(e.amount), 0)
                   const donBudget = parseFloat(don.budgeted || 0)
+                  const isEditingDon = editingDonation?.id === don.id
                   return (
                     <Card key={don.id} padding="compact">
                       <div className="budget-cat-row">
                         <div className="bcat-left">
                           <div className="bcat-dot" style={{background: don.color || '#e6ad3c'}}/>
                           <div className="bcat-info">
-                            <div className="bcat-name">{don.name}</div>
+                            <div className="bcat-sub-name-row">
+                              <span className="bcat-name">{don.name}</span>
+                              <button className="bcat-sub-act edit" title="Renombrar"
+                                onClick={() => { setEditingDonation({id: don.id}); setEditDonVal(don.name) }}>✎</button>
+                              <button className="bcat-sub-act del" title="Eliminar"
+                                onClick={async () => {
+                                  if (!window.confirm(`¿Eliminar "${don.name}"?`)) return
+                                  await deleteDonation(don.id)
+                                  refetchDonations()
+                                }}>✕</button>
+                            </div>
                             <div className="bcat-locked-tag">donación</div>
                           </div>
                         </div>
@@ -494,9 +507,26 @@ export default function Presupuesto() {
                           )}
                         </div>
                         <div className="bcat-right">
-                          <div className="bcat-locked-amount" style={{color:'var(--gold)'}}>
-                            {donBudget > 0 ? formatCurrency(donBudget) : '—'}
-                          </div>
+                          {isEditingDon ? (
+                            <input className="bcat-sub-input" type="number" min="0" step="10" autoFocus
+                              value={editDonVal}
+                              onChange={e => setEditDonVal(e.target.value)}
+                              onBlur={async () => {
+                                await api.donations.update(don.id, { budgeted: parseFloat(editDonVal)||0 })
+                                setEditingDonation(null)
+                                refetchDonations()
+                              }}
+                              onKeyDown={e => {
+                                if (e.key==='Enter') e.target.blur()
+                                if (e.key==='Escape') setEditingDonation(null)
+                              }}/>
+                          ) : (
+                            <button className="bcat-locked-amount"
+                              style={{color:'var(--gold)',background:'none',border:'none',cursor:'pointer',fontFamily:'var(--font-sans)',fontSize:'inherit'}}
+                              onClick={() => { setEditingDonation({id: don.id}); setEditDonVal(donBudget||'') }}>
+                              {donBudget > 0 ? formatCurrency(donBudget) : '+ límite'}
+                            </button>
+                          )}
                         </div>
                       </div>
                     </Card>
