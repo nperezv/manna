@@ -418,7 +418,7 @@ export default function Ajustes() {
                   <div style={{display:'flex',flexDirection:'column',gap:4}}>
                     {institutions.map(inst => (
                       <button key={inst.id || inst.name} className="bank-pick-btn"
-                        onClick={() => connectBank(inst.id || inst.name)}>
+                        onClick={() => connectBank(inst.id)}>
                         {inst.name}
                       </button>
                     ))}
