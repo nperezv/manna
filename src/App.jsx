@@ -16,6 +16,7 @@ import Ajustes from './pages/Ajustes'
 import Unirse from './pages/Unirse'
 import Perfil from './pages/Perfil'
 import Join from './pages/Join'
+import Landing from './pages/Landing'
 import BankCallback from './pages/BankCallback'
 
 // Loading splash
@@ -80,16 +81,25 @@ function PublicRoute({ children }) {
   return children
 }
 
+function RootRoute() {
+  const { user, loading } = useAuth()
+  if (loading) return <LoadingSplash />
+  if (user) return <Navigate to="/" replace />
+  return <Landing />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          <Route path="/bienvenida" element={<Landing />} />
           <Route path="/registro" element={<PublicRoute><Onboarding /></PublicRoute>} />
           <Route path="/login"    element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/unirse"   element={<Unirse />} />
           <Route path="/unirse"   element={<JoinRoute />} />
           <Route path="/bank/callback" element={<BankCallback />} />
+          <Route path="/bienvenida"    element={<Landing />} />
           <Route path="/*"        element={<ProtectedRoutes />} />
         </Routes>
       </AuthProvider>
