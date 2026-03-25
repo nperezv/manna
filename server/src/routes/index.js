@@ -58,11 +58,11 @@ router.delete('/expenses/:id', expensesCtrl.deleteExpense)
 // Tithe
 router.get('/tithe',         titheCtrl.getTitheData)
 router.get('/tithe/history', titheCtrl.getTitheHistory)
-router.post('/tithe/pay',  titheCtrl.registerPayment)
+router.post('/tithe/pay',    titheCtrl.registerPayment)
 
 // Budget
-router.get('/budget',             budgetCtrl.getBudget)
-router.put('/budget/category',    budgetCtrl.upsertBudgetCategory)
+router.get('/budget',                   budgetCtrl.getBudget)
+router.put('/budget/category',          budgetCtrl.upsertBudgetCategory)
 router.put('/budget/subcategory',       budgetCtrl.upsertSubcategoryBudget)
 router.get('/budget/custom-subs',       budgetCtrl.getCustomSubs)
 router.post('/budget/custom-subs',      budgetCtrl.createCustomSub)
@@ -70,8 +70,11 @@ router.patch('/budget/custom-subs/:id', budgetCtrl.updateCustomSub)
 router.delete('/budget/custom-subs/:id',budgetCtrl.deleteCustomSub)
 router.get('/budget/renamed-subs',      budgetCtrl.getRenamedSubs)
 router.patch('/budget/renamed-subs',    budgetCtrl.updateRenamedSub)
-router.get('/budget/suggest',      budgetSuggestCtrl.getBudgetSuggestion)
-router.post('/budget/copy',        budgetSuggestCtrl.copyBudget)
+router.get('/budget/hidden-subs',       budgetCtrl.getHiddenSubs)
+router.post('/budget/hidden-subs',      budgetCtrl.hideSystemSub)
+router.delete('/budget/hidden-subs',    budgetCtrl.showSystemSub)
+router.get('/budget/suggest',           budgetSuggestCtrl.getBudgetSuggestion)
+router.post('/budget/copy',             budgetSuggestCtrl.copyBudget)
 
 // Debts
 router.get('/debts',               debtsCtrl.getDebts)
@@ -92,7 +95,7 @@ router.get('/donations',          donationsCtrl.getDonations)
 router.post('/donations',         donationsCtrl.createDonation)
 router.delete('/donations/:id',   donationsCtrl.deleteDonation)
 router.patch('/donations/:id',    donationsCtrl.updateDonation)
-router.post('/donations/:id/pay',  donationsCtrl.payDonation)
+router.post('/donations/:id/pay', donationsCtrl.payDonation)
 
 // Bank
 router.get('/bank/institutions',      bankCtrl.getInstitutions)
@@ -102,8 +105,8 @@ router.get('/bank/status',            bankCtrl.getBankStatus)
 router.delete('/bank/connections/:id',bankCtrl.disconnectBank)
 
 // Profile
-router.patch('/profile',          profileCtrl.updateProfile)
-router.post('/profile/password',  profileCtrl.changePassword)
+router.patch('/profile',         profileCtrl.updateProfile)
+router.post('/profile/password', profileCtrl.changePassword)
 
 // Invitations — protected
 router.get('/invitations',         invitationsCtrl.list)
