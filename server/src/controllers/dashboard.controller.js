@@ -18,7 +18,7 @@ const getDashboard = async (req, res) => {
     const m = month || new Date().toISOString().slice(0, 7)
     const { from, to } = getFinancialMonthRange(m, startDay)
 
-    const [incomeRes, expenseRes, titheRes, fastRes, budgetRes, recentRes, debtsRes, donationsRes] = await Promise.all([
+    const [incomeRes, expenseRes, titheRes, fastRes, budgetRes, recentRes, debtsRes, donationsRes, donationsListRes] = await Promise.all([
       pool.query(`SELECT SUM(amount) as total, SUM(CASE WHEN computable THEN amount ELSE 0 END) as computable FROM incomes WHERE family_id=$1 AND date>=$2 AND date<=$3`, [familyId, from, to]),
       pool.query(`SELECT category_id, SUM(amount) as spent FROM expenses WHERE family_id=$1 AND date>=$2 AND date<=$3 GROUP BY category_id`, [familyId, from, to]),
       pool.query(`SELECT SUM(amount) as paid FROM tithe_payments WHERE family_id=$1 AND date>=$2 AND date<=$3`, [familyId, from, to]),
@@ -33,6 +33,15 @@ const getDashboard = async (req, res) => {
       ),
       pool.query(`SELECT SUM(monthly_payment) as monthly_total, COUNT(*) as count FROM debts WHERE family_id=$1 AND active=true`, [familyId]),
       pool.query(`SELECT SUM(budgeted) as total FROM donations WHERE family_id=$1 AND active=true`, [familyId]),
+      pool.query(
+        `SELECT d.id, d.name, d.color, d.budgeted,
+          COALESCE(SUM(p.amount),0) as paid
+         FROM donations d
+         LEFT JOIN donation_payments p ON p.donation_id=d.id AND p.date>=$2 AND p.date<=$3
+         WHERE d.family_id=$1 AND d.active=true
+         GROUP BY d.id ORDER BY d.created_at`,
+        [familyId, from, to]
+      ),
     ])
 
     const totalIncome     = parseFloat(incomeRes.rows[0]?.total)      || 0
@@ -66,6 +75,11 @@ const getDashboard = async (req, res) => {
         count: parseInt(debtsRes.rows[0]?.count) || 0,
       },
       donationsMonthly: parseFloat(donationsRes.rows[0]?.total) || 0,
+      donationsList: donationsListRes.rows.map(r => ({
+        id: r.id, name: r.name, color: r.color,
+        budgeted: parseFloat(r.budgeted)||0,
+        paid: parseFloat(r.paid)||0,
+      })),
       family: { name: family.name, tithePercent: family.tithe_percent, fastOfferingPercent: family.fast_offering_percent, monthStartDay: startDay },
     })
   } catch (err) {
