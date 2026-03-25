@@ -6,13 +6,13 @@ import './Sidebar.css'
 
 const NAV = [
   { to: '/',            label: 'Inicio',      icon: '⬡' },
-  { to: '/diezmos',     label: 'Diezmos',     icon: '✦' },
   { to: '/ingresos',    label: 'Ingresos',    icon: '↑' },
-  { to: '/gastos',      label: 'Gastos',      icon: '◈' },
   { to: '/presupuesto', label: 'Presupuesto', icon: '▦' },
+  { to: '/diezmos',     label: 'Diezmos',     icon: '✦' },
+  { to: '/gastos',      label: 'Gastos',      icon: '◈' },
   { to: '/ahorro',      label: 'Ahorro',      icon: '◎' },
   { to: '/deudas',      label: 'Deudas',      icon: '⊖' },
-  { to: '/consejero',   label: 'Consejero',   icon: '◑' },
+  { to: '/consejero',   label: 'Stewie',      icon: '◑' },
 ]
 
 function UserMenu({ user, family, theme, toggleTheme, onClose, onLogout, navigate }) {
