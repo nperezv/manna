@@ -14,6 +14,7 @@ const dashboardCtrl   = require('../controllers/dashboard.controller')
 const donationsCtrl   = require('../controllers/donations.controller')
 const invitationsCtrl = require('../controllers/invitations.controller')
 const profileCtrl     = require('../controllers/profile.controller')
+const bankCtrl        = require('../controllers/bank.controller')
 
 const router = express.Router()
 
@@ -26,6 +27,9 @@ router.post('/auth/logout',   authCtrl.logout)
 // Invitations — public
 router.get('/invitations/check',   invitationsCtrl.checkToken)
 router.post('/invitations/accept', invitationsCtrl.accept)
+
+// Bank callback — public (redirect from bank)
+router.get('/bank/callback', bankCtrl.handleCallback)
 
 // ── Protected routes ──────────────────────────────────────────
 router.use(authenticate)
@@ -89,6 +93,13 @@ router.post('/donations',         donationsCtrl.createDonation)
 router.delete('/donations/:id',   donationsCtrl.deleteDonation)
 router.patch('/donations/:id',    donationsCtrl.updateDonation)
 router.post('/donations/:id/pay',  donationsCtrl.payDonation)
+
+// Bank
+router.get('/bank/institutions',      bankCtrl.getInstitutions)
+router.post('/bank/connect',          bankCtrl.connectBank)
+router.post('/bank/sync',             bankCtrl.syncTransactions)
+router.get('/bank/status',            bankCtrl.getBankStatus)
+router.delete('/bank/connections/:id',bankCtrl.disconnectBank)
 
 // Profile
 router.patch('/profile',          profileCtrl.updateProfile)
