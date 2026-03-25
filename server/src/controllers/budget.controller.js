@@ -79,6 +79,7 @@ const upsertBudgetCategory = async (req, res) => {
        ON CONFLICT (family_id, category_id, month) DO UPDATE SET budgeted=$3 RETURNING *`,
       [familyId, category_id, budgeted, m]
     )
+    req.app.get('emitToFamily')?.(familyId, 'data_changed', { type: 'budget' })
     return res.json(result.rows[0])
   } catch (err) {
     console.error('upsertBudgetCategory error:', err)
@@ -97,6 +98,7 @@ const upsertSubcategoryBudget = async (req, res) => {
        ON CONFLICT (family_id, subcategory_id, month) DO UPDATE SET budgeted=$3 RETURNING *`,
       [familyId, subcategory_id, budgeted, m]
     )
+    req.app.get('emitToFamily')?.(familyId, 'data_changed', { type: 'budget' })
     return res.json(result.rows[0])
   } catch (err) {
     console.error('upsertSubcategoryBudget error:', err)
@@ -104,7 +106,6 @@ const upsertSubcategoryBudget = async (req, res) => {
   }
 }
 
-module.exports = { getBudget, upsertBudgetCategory, upsertSubcategoryBudget }
 // ── Custom subcategories (shared across family via DB) ────────
 
 const getCustomSubs = async (req, res) => {
@@ -152,6 +153,7 @@ const updateCustomSub = async (req, res) => {
       [name||null, color||null, budgeted!=null?budgeted:null, id, familyId]
     )
     if (!result.rows[0]) return res.status(404).json({ error: 'No encontrada' })
+    req.app.get('emitToFamily')?.(familyId, 'data_changed', { type: 'budget' })
     return res.json(result.rows[0])
   } catch (err) {
     return res.status(500).json({ error: 'Error al actualizar subcategoría' })
@@ -163,6 +165,7 @@ const deleteCustomSub = async (req, res) => {
   const familyId = req.user.familyId
   try {
     await pool.query(`DELETE FROM custom_subcategories WHERE id=$1 AND family_id=$2`, [id, familyId])
+    req.app.get('emitToFamily')?.(familyId, 'data_changed', { type: 'budget' })
     return res.json({ ok: true })
   } catch (err) {
     return res.status(500).json({ error: 'Error al eliminar subcategoría' })
@@ -191,6 +194,7 @@ const updateRenamedSub = async (req, res) => {
       `UPDATE families SET renamed_subs = COALESCE(renamed_subs,'{}') || $1::jsonb WHERE id=$2`,
       [JSON.stringify({[sub_id]: name}), familyId]
     )
+    req.app.get('emitToFamily')?.(familyId, 'data_changed', { type: 'budget' })
     return res.json({ ok: true })
   } catch (err) {
     console.error('updateRenamedSub error:', err)
@@ -198,8 +202,60 @@ const updateRenamedSub = async (req, res) => {
   }
 }
 
+
+// ── Hidden system subs (stored as JSONB on families table) ───
+
+const getHiddenSubs = async (req, res) => {
+  const familyId = req.user.familyId
+  try {
+    await pool.query(`ALTER TABLE families ADD COLUMN IF NOT EXISTS hidden_subs jsonb DEFAULT '[]'`).catch(()=>{})
+    const result = await pool.query(`SELECT hidden_subs FROM families WHERE id=$1`, [familyId])
+    return res.json(result.rows[0]?.hidden_subs || [])
+  } catch (err) {
+    return res.json([])
+  }
+}
+
+const hideSystemSub = async (req, res) => {
+  const { sub_id } = req.body
+  const familyId = req.user.familyId
+  try {
+    await pool.query(`ALTER TABLE families ADD COLUMN IF NOT EXISTS hidden_subs jsonb DEFAULT '[]'`).catch(()=>{})
+    await pool.query(
+      `UPDATE families SET hidden_subs = COALESCE(hidden_subs,'[]'::jsonb) || $1::jsonb WHERE id=$2`,
+      [JSON.stringify([sub_id]), familyId]
+    )
+    req.app.get('emitToFamily')?.(familyId, 'data_changed', { type: 'budget' })
+    return res.json({ ok: true })
+  } catch (err) {
+    console.error('hideSystemSub error:', err)
+    return res.status(500).json({ error: 'Error al ocultar subcategoría' })
+  }
+}
+
+const showSystemSub = async (req, res) => {
+  const { sub_id } = req.body
+  const familyId = req.user.familyId
+  try {
+    await pool.query(`ALTER TABLE families ADD COLUMN IF NOT EXISTS hidden_subs jsonb DEFAULT '[]'`).catch(()=>{})
+    // Remove sub_id from the array
+    await pool.query(
+      `UPDATE families SET hidden_subs = (
+        SELECT jsonb_agg(elem) FROM jsonb_array_elements(COALESCE(hidden_subs,'[]')) elem
+        WHERE elem::text != $1::text
+      ) WHERE id=$2`,
+      [sub_id, familyId]
+    )
+    req.app.get('emitToFamily')?.(familyId, 'data_changed', { type: 'budget' })
+    return res.json({ ok: true })
+  } catch (err) {
+    return res.status(500).json({ error: 'Error al mostrar subcategoría' })
+  }
+}
+
 module.exports = {
   getBudget, upsertBudgetCategory, upsertSubcategoryBudget,
   getCustomSubs, createCustomSub, updateCustomSub, deleteCustomSub,
   getRenamedSubs, updateRenamedSub,
+  getHiddenSubs, hideSystemSub, showSystemSub,
 }
