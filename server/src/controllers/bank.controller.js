@@ -11,10 +11,24 @@ const REDIRECT = process.env.FRONTEND_URL + '/bank/callback'
 function makeJWT() {
   const privateKey = fs.readFileSync(KEY_PATH, 'utf8')
   const now = Math.floor(Date.now() / 1000)
+  
   return jwt.sign(
-    { iss: APP_ID, iat: now, exp: now + 3600 },
+    { 
+      // PAYLOAD (Cuerpo): Debe ser así según la documentación
+      iss: 'enablebanking.com',      // ¡IMPORTANTE! Cambia esto, antes tenías el APP_ID aquí
+      aud: 'api.enablebanking.com',  // ¡NUEVO! Añade esta línea
+      iat: now, 
+      exp: now + 3600 
+    },
     privateKey,
-    { algorithm: 'RS256' }
+    { 
+      algorithm: 'RS256',
+      header: {
+        typ: 'JWT',
+        alg: 'RS256',
+        kid: '8fc71123-a01c-4870-8be8-623408fb092d' // <--- TU KID AQUÍ
+      }
+    }
   )
 }
 
