@@ -42,13 +42,14 @@
 }
 .landing-nav-sub {
   font-family: 'Poppins', sans-serif;
-  font-size: .6rem;
+  font-size: .55rem;
   font-weight: 300;
-  letter-spacing: .09em;
+  letter-spacing: .13em;
   text-transform: uppercase;
   color: var(--text-tertiary);
-  /* Compensate trailing letter-spacing gap so text width matches "manna" */
-  margin-right: -.09em;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 4.8em;   /* locks to approx width of "manna" text block */
 }
 .landing-nav-actions { display: flex; gap: 10px; align-items: center; }
 

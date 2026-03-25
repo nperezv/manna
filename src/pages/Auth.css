@@ -52,14 +52,15 @@
 
 .auth-tagline {
   font-family: var(--font-brand, 'Poppins', sans-serif);
-  font-size: .65rem;
+  font-size: .55rem;
   font-weight: 300;
   color: var(--text-tertiary);
-  letter-spacing: .09em;
+  letter-spacing: .13em;
   text-transform: uppercase;
   margin-top: 2px;
-  /* Compensate for trailing letter-spacing so text aligns with "manna" width */
-  margin-right: -.09em;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 4.8em;
 }
 
 .auth-tabs {
