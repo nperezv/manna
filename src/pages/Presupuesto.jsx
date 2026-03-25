@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useBudget, useExpenses, useApi } from '../hooks/useData'
+import { useBudget, useExpenses, useApi, useDonations } from '../hooks/useData'
 import { useFamilySocket } from '../hooks/useSocket'
 import { Card, ProgressBar, Badge, PageHeader } from '../components/ui'
 import MonthNav from '../components/ui/MonthNav'
@@ -50,6 +50,7 @@ export default function Presupuesto() {
   })
 
   const { budget, loading, setCategory, setSubcategory } = useBudget(month)
+  const { donations, refetch: refetchDonations } = useDonations()
   const { expenses } = useExpenses(month)
 
   const toggleExpand = (id) => setExpandedCats(prev => {
@@ -72,21 +73,23 @@ export default function Presupuesto() {
     return getParentId(e.category_id) === catId
   }).reduce((s, e) => s + parseFloat(e.amount), 0)
 
+  const donationsTotalBudgeted = donations?.filter(d => d.active).reduce((s, d) => s + parseFloat(d.budgeted || 0), 0) || 0
   const totalBudgeted = PARENT_CATEGORIES.reduce((s, c) => {
     if (c.id === 1)  return s + titheOwed
     if (c.id === 11) return s + fastOwed
     if (c.id === 10) return s + totalDebtPayment
     return s + (budgetMap[c.id] || 0)
-  }, 0)
+  }, 0) + donationsTotalBudgeted
   const totalSpent    = PARENT_CATEGORIES.reduce((s, c) => s + getSpent(c.id), 0)
   const monthIncome   = budget?.computableIncome || 0
   const sinAsignar    = monthIncome - totalBudgeted
 
   // Real-time sync via WebSockets
   useFamilySocket({
-    onExpense: () => expenses?.refetch?.(),
-    onBudget:  () => budget?.refetch?.(),
-    onIncome:  () => {},
+    onExpense:  () => expenses?.refetch?.(),
+    onBudget:   () => budget?.refetch?.(),
+    onDonation: () => refetchDonations(),
+    onIncome:   () => {},
   })
 
   // Custom subs from DB — shared across family
@@ -278,12 +281,15 @@ export default function Presupuesto() {
 
         {[1,2,3,4].map(pillar => {
           const cats = PARENT_CATEGORIES.filter(c => c.pillar === pillar)
+          const donationsBudgeted = pillar === 1
+            ? (donations || []).filter(d => d.active).reduce((s, d) => s + parseFloat(d.budgeted || 0), 0)
+            : 0
           const pillarBudgeted = cats.reduce((s, c) => {
             if (c.id === 1)  return s + titheOwed
             if (c.id === 11) return s + fastOwed
             if (c.id === 10) return s + totalDebtPayment
             return s + (budgetMap[c.id] || 0)
-          }, 0)
+          }, 0) + donationsBudgeted
 
           return (
             <div key={pillar}>
@@ -462,6 +468,41 @@ export default function Presupuesto() {
                   )
                 })}
 
+                {pillar === 1 && (donations || []).filter(d => d.active).map(don => {
+                  const donSpent = expenses.filter(e => e.is_donation && e.description?.includes(don.name))
+                    .reduce((s, e) => s + parseFloat(e.amount), 0)
+                  const donBudget = parseFloat(don.budgeted || 0)
+                  return (
+                    <Card key={don.id} padding="compact">
+                      <div className="budget-cat-row">
+                        <div className="bcat-left">
+                          <div className="bcat-dot" style={{background: don.color || '#e6ad3c'}}/>
+                          <div className="bcat-info">
+                            <div className="bcat-name">{don.name}</div>
+                            <div className="bcat-locked-tag">donación</div>
+                          </div>
+                        </div>
+                        <div className="bcat-middle">
+                          {donBudget > 0 && (
+                            <>
+                              <ProgressBar value={donSpent} max={donBudget} variant="gold"/>
+                              <div className="bcat-progress-labels">
+                                <span>{formatCurrency(donSpent)} gastado</span>
+                                <span>{formatCurrency(donBudget - donSpent)} restante</span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        <div className="bcat-right">
+                          <div className="bcat-locked-amount" style={{color:'var(--gold)'}}>
+                            {donBudget > 0 ? formatCurrency(donBudget) : '—'}
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  )
+                })}
+
                 {pillar === 1 && (
                   <button className="bcat-add-donation" onClick={() => setShowDonationModal(true)}>
                     + Añadir donación al Pilar 1
@@ -606,7 +647,7 @@ export default function Presupuesto() {
       )}
 
       {showDonationModal && (
-        <AddDonationModal onClose={() => setShowDonationModal(false)} onAdded={() => setShowDonationModal(false)}/>
+        <AddDonationModal onClose={() => setShowDonationModal(false)} onAdded={() => { setShowDonationModal(false); refetchDonations() }}/>
       )}
       {customSubModal && (
         <AddCustomSubModal parentId={customSubModal.parentId} parentName={customSubModal.parentName} parentColor={customSubModal.parentColor}
