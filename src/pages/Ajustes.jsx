@@ -417,9 +417,15 @@ export default function Ajustes() {
                 ) : (
                   <div style={{display:'flex',flexDirection:'column',gap:4}}>
                     {institutions.map(inst => (
-                      <button key={inst.id || inst.name} className="bank-pick-btn"
-                        onClick={() => connectBank(inst.id)}>
-                        {inst.name}
+                      <button 
+                          key={inst.name} 
+                          className="bank-pick-btn"
+                          onClick={() => {
+                            console.log("Banco seleccionado completo:", inst); // Mira esto en la consola del navegador (F12)
+                            connectBank(inst.name); 
+                          }}
+                        >
+                          {inst.name}
                       </button>
                     ))}
                   </div>
