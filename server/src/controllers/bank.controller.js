@@ -26,7 +26,7 @@ function makeJWT() {
       header: {
         typ: 'JWT',
         alg: 'RS256',
-        kid: process.env.ENABLEBANKING_APP_ID
+        kid: APP_ID
       }
     }
   )
