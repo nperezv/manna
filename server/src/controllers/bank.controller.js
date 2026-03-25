@@ -26,7 +26,7 @@ function makeJWT() {
       header: {
         typ: 'JWT',
         alg: 'RS256',
-        kid: '8fc71123-a01c-4870-8be8-623408fb092d' // <--- TU KID AQUÍ
+        kid: process.env.ENABLEBANKING_APP_ID
       }
     }
   )
