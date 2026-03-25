@@ -35,53 +35,6 @@ export default function Ajustes() {
   const [inviteMsg, setInviteMsg]     = useState('')
   const [newRule, setNewRule]         = useState({ pattern: '', categoryId: 301 })
 
-  // Bank state
-  const [bankConnections, setBankConnections] = useState([])
-  const [institutions, setInstitutions]       = useState([])
-  const [bankLoading, setBankLoading]         = useState(false)
-  const [syncing, setSyncing]                 = useState(false)
-  const [showBankPicker, setShowBankPicker]   = useState(false)
-
-  useEffect(() => {
-    api.bank.status().then(setBankConnections).catch(() => {})
-  }, [])
-
-  const loadInstitutions = async () => {
-    if (institutions.length) { setShowBankPicker(true); return }
-    setBankLoading(true)
-    try {
-      const data = await api.bank.institutions('ES')
-      setInstitutions(data.aspsps || [])
-      setShowBankPicker(true)
-    } catch(err) { alert('Error al cargar bancos: ' + err.message) }
-    finally { setBankLoading(false) }
-  }
-
-  const connectBank = async (institutionId) => {
-    setShowBankPicker(false)
-    setBankLoading(true)
-    try {
-      const { auth_url } = await api.bank.connect({ institution_id: institutionId })
-      window.location.href = auth_url
-    } catch(err) { alert('Error: ' + err.message) }
-    finally { setBankLoading(false) }
-  }
-
-  const syncBank = async () => {
-    setSyncing(true)
-    try {
-      const { synced } = await api.bank.sync()
-      alert(`✓ ${synced} movimientos importados`)
-      setBankConnections(await api.bank.status())
-    } catch(err) { alert('Error al sincronizar: ' + err.message) }
-    finally { setSyncing(false) }
-  }
-
-  const disconnectBank = async (id) => {
-    if (!window.confirm('¿Desconectar este banco?')) return
-    await api.bank.disconnect(id)
-    setBankConnections(await api.bank.status())
-  }
 
   const [form, setForm] = useState({
     name: '',
@@ -359,84 +312,7 @@ export default function Ajustes() {
           </>
         )}
 
-        {/* ── BANCO ── */}
-        <Section title="Conexión bancaria">
-          <Card>
-            {bankConnections.filter(c => c.status === 'active').length === 0 ? (
-              <div style={{display:'flex',flexDirection:'column',gap:10}}>
-                <div style={{fontSize:'.875rem',color:'var(--text-secondary)'}}>
-                  Conecta tu banco para importar movimientos automáticamente.
-                </div>
-                <Button size="sm" onClick={loadInstitutions} disabled={bankLoading}>
-                  {bankLoading ? 'Cargando...' : '+ Conectar banco'}
-                </Button>
-              </div>
-            ) : (
-              <div style={{display:'flex',flexDirection:'column',gap:12}}>
-                {bankConnections.filter(c => c.status === 'active').map(conn => (
-                  <div key={conn.id} style={{display:'flex',alignItems:'center',gap:10,justifyContent:'space-between'}}>
-                    <div>
-                      <div style={{fontWeight:600,color:'var(--text-primary)',fontSize:'.875rem'}}>{conn.institution_id}</div>
-                      {conn.accounts?.[0]?.last_synced && (
-                        <div style={{fontSize:'.72rem',color:'var(--text-tertiary)'}}>
-                          Última sync: {new Date(conn.accounts[0].last_synced).toLocaleDateString('es-ES')}
-                        </div>
-                      )}
-                      {(conn.accounts || []).filter(a => a.iban).map(acc => (
-                        <div key={acc.id} style={{fontSize:'.72rem',color:'var(--text-tertiary)'}}>{acc.iban}</div>
-                      ))}
-                    </div>
-                    <div style={{display:'flex',gap:6}}>
-                      <Button size="sm" onClick={syncBank} disabled={syncing}>
-                        {syncing ? '...' : '↺ Sync'}
-                      </Button>
-                      <button style={{background:'none',border:'none',cursor:'pointer',color:'var(--danger)',fontSize:'.75rem'}}
-                        onClick={() => disconnectBank(conn.id)}>Desconectar</button>
-                    </div>
-                  </div>
-                ))}
-                <Button size="sm" variant="secondary" onClick={loadInstitutions} disabled={bankLoading}>
-                  + Añadir otro banco
-                </Button>
-              </div>
-            )}
-          </Card>
-        </Section>
-
-        {/* Bank picker modal */}
-        {showBankPicker && (
-          <div className="modal-backdrop" onClick={() => setShowBankPicker(false)}>
-            <div className="modal" onClick={e => e.stopPropagation()}>
-              <div className="modal-header">
-                <div className="modal-title">Selecciona tu banco</div>
-                <button className="modal-close" onClick={() => setShowBankPicker(false)}>✕</button>
-              </div>
-              <div className="modal-body" style={{maxHeight:'60vh',overflowY:'auto'}}>
-                {institutions.length === 0 ? (
-                  <div style={{textAlign:'center',color:'var(--text-tertiary)',padding:20}}>Cargando bancos...</div>
-                ) : (
-                  <div style={{display:'flex',flexDirection:'column',gap:4}}>
-                    {institutions.map(inst => (
-                      <button 
-                        key={inst.aspsp_name || inst.name} 
-                        className="bank-pick-btn"
-                        onClick={() => {
-                          const technicalId = inst.aspsp_name || inst.name; 
-                          console.log("Enviando ID técnico:", technicalId);
-                          connectBank(technicalId); 
-                        }}
-                      >
-                        {inst.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── PREFERENCIAS DE USUARIO ── */}
+                {/* ── PREFERENCIAS DE USUARIO ── */}
         <Section title="Preferencias">
           <Card>
             {/* Theme */}
