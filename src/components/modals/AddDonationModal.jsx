@@ -18,12 +18,7 @@ function donationColor(index) {
   return variants[index % variants.length]
 }
 
-function getNextIndex() {
-  try {
-    const existing = JSON.parse(localStorage.getItem('manna_donations_count') || '0')
-    return existing
-  } catch { return 0 }
-}
+
 
 export default function AddDonationModal({ onClose, onAdded }) {
   const [form, setForm] = useState({
@@ -39,9 +34,8 @@ export default function AddDonationModal({ onClose, onAdded }) {
     if (!form.name.trim()) return
     setLoading(true)
     try {
-      const idx = getNextIndex()
-      const color = donationColor(idx)
-      localStorage.setItem('manna_donations_count', JSON.stringify(idx + 1))
+      const existing = await api.donations.list()
+      const color = donationColor(existing.length)
 
       await api.donations.create({
         name: form.name.trim(),
