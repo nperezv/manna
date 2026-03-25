@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const BASE_URL = '/api'
 
 let accessToken = null
 export const setAccessToken = (token) => { accessToken = token }
