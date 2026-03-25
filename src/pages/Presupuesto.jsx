@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useBudget, useExpenses } from '../hooks/useData'
+import { useBudget, useExpenses, useApi } from '../hooks/useData'
 import { Card, ProgressBar, Badge, PageHeader } from '../components/ui'
 import MonthNav from '../components/ui/MonthNav'
 import AddDonationModal from '../components/modals/AddDonationModal'
@@ -79,13 +79,13 @@ export default function Presupuesto() {
   }, 0)
   const totalSpent = PARENT_CATEGORIES.reduce((s, c) => s + getSpent(c.id), 0)
 
-  const getCustomSubs = (catId) => {
-    try { return JSON.parse(localStorage.getItem(`manna_custom_subs_${catId}`) || '[]') }
-    catch { return [] }
-  }
-  const saveCustomSubs = (catId, subs) => {
-    localStorage.setItem(`manna_custom_subs_${catId}`, JSON.stringify(subs))
-  }
+  // Custom subs from DB — shared across family
+  const { data: allCustomSubs, refetch: refetchCustomSubs } = useApi(() => api.budget.customSubs(), [])
+  const getCustomSubs = (catId) => (allCustomSubs || [])
+    .filter(s => s.parent_id === catId)
+    .map(s => ({ id: s.id, name: s.name, color: s.color, parentId: s.parent_id,
+                 budgeted: parseFloat(s.budgeted)||0, custom: true }))
+  const saveCustomSubs = () => {} // no-op
 
   const hideSub = (catId, subId, subName, hasExpenses) => {
     if (hasExpenses && !window.confirm(`"${subName}" tiene gastos registrados. ¿Ocultar de todas formas?`)) return
@@ -137,38 +137,34 @@ export default function Presupuesto() {
     setEditingSub(null)
   }
 
-  // Renamed system subs stored separately
-  const getRenamedSubs = () => {
-    try { return JSON.parse(localStorage.getItem('manna_renamed_subs') || '{}') }
-    catch { return {} }
-  }
+  // Renamed system subs from DB — shared across family
+  const { data: renamedSubsDB, refetch: refetchRenamedSubs } = useApi(() => api.budget.renamedSubs(), [])
   const getSubName = (sub) => {
     if (sub.custom) return sub.name
-    const renamed = getRenamedSubs()
-    return renamed[sub.id] || sub.name
+    return (renamedSubsDB || {})[sub.id] || sub.name
   }
 
-  const handleRenameSub = (catId, subId, newName, isCustom) => {
+  const handleRenameSub = async (catId, subId, newName, isCustom) => {
     if (!newName.trim()) { setRenamingSub(null); return }
-    if (isCustom) {
-      const customs = getCustomSubs(catId)
-      saveCustomSubs(catId, customs.map(s => s.id === subId ? { ...s, name: newName } : s))
-    } else {
-      const renamed = getRenamedSubs()
-      renamed[subId] = newName
-      localStorage.setItem('manna_renamed_subs', JSON.stringify(renamed))
-    }
+    try {
+      if (isCustom) {
+        await api.budget.updateCustomSub(subId, { name: newName })
+        refetchCustomSubs()
+      } else {
+        await api.budget.renameSystemSub({ sub_id: String(subId), name: newName })
+        refetchRenamedSubs()
+      }
+    } catch(err) { console.error('rename error:', err) }
     setRenamingSub(null)
-    setExpandedCats(prev => new Set(prev))
   }
 
-  const handleDeleteSub = (catId, sub) => {
+  const handleDeleteSub = async (catId, sub) => {
     const subExp = expenses.filter(e => e.category_id === sub.id)
     if (sub.custom) {
       if (subExp.length > 0 && !window.confirm(`"${sub.name}" tiene ${subExp.length} gasto(s). ¿Eliminar?`)) return
-      const updated = getCustomSubs(catId).filter(s => s.id !== sub.id)
-      saveCustomSubs(catId, updated)
-      const rem = [...SUBCATEGORIES.filter(s => s.parentId === catId && !hiddenSubs.has(s.id)), ...updated]
+      await api.budget.deleteCustomSub(sub.id)
+      await refetchCustomSubs()
+      const rem = [...SUBCATEGORIES.filter(s => s.parentId === catId && !hiddenSubs.has(s.id)), ...getCustomSubs(catId)]
       setCategory(catId, rem.reduce((sum, s) => sum + (subBudgetMap[s.id] || 0), 0))
     } else {
       hideSub(catId, sub.id, sub.name, subExp.length > 0)
