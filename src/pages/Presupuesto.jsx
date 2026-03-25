@@ -46,10 +46,9 @@ export default function Presupuesto() {
   const [distDialog, setDistDialog]               = useState(null)
   const [suggestDialog, setSuggestDialog]         = useState(null)
   const [suggestLoading, setSuggestLoading]       = useState(false)
-  const [hiddenSubs, setHiddenSubs] = useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem('manna_hidden_subs') || '[]')) }
-    catch { return new Set() }
-  })
+  // Hidden system subs from DB — shared across family
+  const { data: hiddenSubsRaw, refetch: refetchHiddenSubs } = useApi(() => api.budget.hiddenSubs(), [])
+  const hiddenSubs = new Set((hiddenSubsRaw || []).map(id => parseInt(id)))
 
   const { budget, loading, setCategory, setSubcategory } = useBudget(month)
   const { donations, refetch: refetchDonations, deleteDonation } = useDonations()
@@ -89,7 +88,7 @@ export default function Presupuesto() {
   // Real-time sync via WebSockets
   useFamilySocket({
     onExpense:  () => expenses?.refetch?.(),
-    onBudget:   () => budget?.refetch?.(),
+    onBudget:   () => { budget?.refetch?.(); refetchHiddenSubs(); refetchCustomSubs(); refetchRenamedSubs() },
     onDonation: () => refetchDonations(),
     onIncome:   () => {},
   })
@@ -102,12 +101,11 @@ export default function Presupuesto() {
                  budgeted: parseFloat(s.budgeted)||0, custom: true }))
   const saveCustomSubs = () => {} // no-op
 
-  const hideSub = (catId, subId, subName, hasExpenses) => {
+  const hideSub = async (catId, subId, subName, hasExpenses) => {
     if (hasExpenses && !window.confirm(`"${subName}" tiene gastos registrados. ¿Ocultar de todas formas?`)) return
-    const next = new Set(hiddenSubs)
-    next.add(subId)
-    setHiddenSubs(next)
-    localStorage.setItem('manna_hidden_subs', JSON.stringify([...next]))
+    await api.budget.hideSystemSub({ sub_id: subId })
+    await refetchHiddenSubs()
+    const next = new Set([...hiddenSubs, subId])
     const allS = [...SUBCATEGORIES.filter(s => s.parentId === catId && !next.has(s.id)), ...getCustomSubs(catId)]
     setCategory(catId, allS.reduce((sum, s) => sum + (subBudgetMap[s.id] || 0), 0))
   }
