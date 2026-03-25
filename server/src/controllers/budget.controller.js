@@ -105,3 +105,101 @@ const upsertSubcategoryBudget = async (req, res) => {
 }
 
 module.exports = { getBudget, upsertBudgetCategory, upsertSubcategoryBudget }
+// ── Custom subcategories (shared across family via DB) ────────
+
+const getCustomSubs = async (req, res) => {
+  const { parent_id } = req.query
+  const familyId = req.user.familyId
+  try {
+    const q = parent_id
+      ? `SELECT * FROM custom_subcategories WHERE family_id=$1 AND parent_id=$2 ORDER BY created_at`
+      : `SELECT * FROM custom_subcategories WHERE family_id=$1 ORDER BY created_at`
+    const result = await pool.query(q, parent_id ? [familyId, parseInt(parent_id)] : [familyId])
+    return res.json(result.rows)
+  } catch (err) {
+    console.error('getCustomSubs error:', err)
+    return res.status(500).json({ error: 'Error al obtener subcategorías' })
+  }
+}
+
+const createCustomSub = async (req, res) => {
+  const { name, color, parent_id, pillar, bank_channel, bank_pattern, budgeted } = req.body
+  const familyId = req.user.familyId
+  try {
+    const result = await pool.query(
+      `INSERT INTO custom_subcategories (family_id, name, color, parent_id, pillar, bank_channel, bank_pattern, budgeted)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      [familyId, name, color||'#4a9fd4', parent_id, pillar||1, bank_channel||'manual', bank_pattern||'', budgeted||0]
+    )
+    return res.status(201).json(result.rows[0])
+  } catch (err) {
+    console.error('createCustomSub error:', err)
+    return res.status(500).json({ error: 'Error al crear subcategoría' })
+  }
+}
+
+const updateCustomSub = async (req, res) => {
+  const { id } = req.params
+  const { name, color, budgeted } = req.body
+  const familyId = req.user.familyId
+  try {
+    const result = await pool.query(
+      `UPDATE custom_subcategories SET
+        name     = COALESCE($1, name),
+        color    = COALESCE($2, color),
+        budgeted = COALESCE($3, budgeted)
+       WHERE id=$4 AND family_id=$5 RETURNING *`,
+      [name||null, color||null, budgeted!=null?budgeted:null, id, familyId]
+    )
+    if (!result.rows[0]) return res.status(404).json({ error: 'No encontrada' })
+    return res.json(result.rows[0])
+  } catch (err) {
+    return res.status(500).json({ error: 'Error al actualizar subcategoría' })
+  }
+}
+
+const deleteCustomSub = async (req, res) => {
+  const { id } = req.params
+  const familyId = req.user.familyId
+  try {
+    await pool.query(`DELETE FROM custom_subcategories WHERE id=$1 AND family_id=$2`, [id, familyId])
+    return res.json({ ok: true })
+  } catch (err) {
+    return res.status(500).json({ error: 'Error al eliminar subcategoría' })
+  }
+}
+
+// ── Renamed system subs (stored as JSONB on families table) ──
+
+const getRenamedSubs = async (req, res) => {
+  const familyId = req.user.familyId
+  try {
+    await pool.query(`ALTER TABLE families ADD COLUMN IF NOT EXISTS renamed_subs jsonb DEFAULT '{}'`).catch(()=>{})
+    const result = await pool.query(`SELECT renamed_subs FROM families WHERE id=$1`, [familyId])
+    return res.json(result.rows[0]?.renamed_subs || {})
+  } catch (err) {
+    return res.json({})
+  }
+}
+
+const updateRenamedSub = async (req, res) => {
+  const { sub_id, name } = req.body
+  const familyId = req.user.familyId
+  try {
+    await pool.query(`ALTER TABLE families ADD COLUMN IF NOT EXISTS renamed_subs jsonb DEFAULT '{}'`).catch(()=>{})
+    await pool.query(
+      `UPDATE families SET renamed_subs = COALESCE(renamed_subs,'{}') || $1::jsonb WHERE id=$2`,
+      [JSON.stringify({[sub_id]: name}), familyId]
+    )
+    return res.json({ ok: true })
+  } catch (err) {
+    console.error('updateRenamedSub error:', err)
+    return res.status(500).json({ error: 'Error al renombrar' })
+  }
+}
+
+module.exports = {
+  getBudget, upsertBudgetCategory, upsertSubcategoryBudget,
+  getCustomSubs, createCustomSub, updateCustomSub, deleteCustomSub,
+  getRenamedSubs, updateRenamedSub,
+}
