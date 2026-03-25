@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;600&display=swap');
+
+.landing {
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+}
+
+/* Nav */
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: .5px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+.landing-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.landing-nav-logo {
+  width: 38px; height: 38px;
+  background: #34c759;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.landing-nav-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: .95rem;
+  font-weight: 200;
+  letter-spacing: .54em;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+.landing-nav-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: .6rem;
+  font-weight: 300;
+  letter-spacing: .155em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.landing-nav-actions { display: flex; gap: 10px; align-items: center; }
+
+/* Buttons */
+.landing-btn-primary {
+  background: #34c759;
+  color: #fff;
+  border: none;
+  border-radius: 99px;
+  padding: 10px 22px;
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: opacity .15s, transform .1s;
+}
+.landing-btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+.landing-btn-ghost {
+  background: none;
+  color: var(--text-secondary);
+  border: .5px solid var(--border);
+  border-radius: 99px;
+  padding: 10px 20px;
+  font-size: .875rem;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all .15s;
+}
+.landing-btn-ghost:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+.landing-btn-lg { padding: 14px 32px; font-size: 1rem; }
+
+/* Hero */
+.landing-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 40px;
+}
+.landing-hero-badge {
+  display: inline-block;
+  background: rgba(52,199,89,.12);
+  color: #34c759;
+  border: .5px solid rgba(52,199,89,.3);
+  border-radius: 99px;
+  padding: 5px 14px;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  margin-bottom: 20px;
+}
+.landing-hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  margin: 0 0 20px;
+  color: var(--text-primary);
+}
+.landing-hero-accent { color: #34c759; }
+.landing-hero-desc {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 32px;
+  max-width: 440px;
+}
+.landing-hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Visual cards */
+.landing-hero-visual {
+  position: relative;
+  height: 320px;
+}
+.landing-card {
+  position: absolute;
+  background: var(--bg-card);
+  border: .5px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.06);
+  animation: floatCard 4s ease-in-out infinite;
+}
+.landing-card--main {
+  width: 240px;
+  top: 20px; left: 0;
+  animation-delay: 0s;
+}
+.landing-card--tithe {
+  width: 160px;
+  top: 0; right: 20px;
+  animation-delay: 1.5s;
+}
+.landing-card--budget {
+  width: 200px;
+  bottom: 20px; right: 0;
+  animation-delay: .8s;
+}
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.lc-label { font-size: .7rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.lc-amount { font-size: 1.4rem; font-weight: 800; letter-spacing: -.03em; margin-bottom: 8px; }
+.lc-amount.accent { color: #34c759; }
+.lc-amount.gold { color: #e6ad3c; }
+.lc-row { display: flex; gap: 10px; font-size: .75rem; margin-bottom: 10px; }
+.lc-up { color: #34c759; }
+.lc-down { color: #ff3b30; }
+.lc-bar { height: 6px; border-radius: 99px; overflow: hidden; display: flex; background: var(--bg-subtle); }
+.lc-bar-seg.spent { background: #ff3b30; }
+.lc-bar-seg.budgeted { background: #378ADD; }
+.lc-bar-seg.free { background: #34c759; }
+.lc-badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: .72rem; font-weight: 600; }
+.lc-badge.green { background: rgba(52,199,89,.12); color: #34c759; }
+.lc-progress { height: 6px; background: var(--bg-subtle); border-radius: 99px; overflow: hidden; margin: 8px 0 4px; }
+.lc-progress-fill { height: 100%; background: #e6ad3c; border-radius: 99px; }
+.lc-meta { font-size: .72rem; color: var(--text-tertiary); }
+
+/* Features */
+.landing-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 40px;
+  border-top: .5px solid var(--border);
+}
+.landing-feature { padding: 8px; }
+.lf-icon { font-size: 1.4rem; color: #34c759; margin-bottom: 12px; }
+.lf-title { font-size: .95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.lf-desc { font-size: .82rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* CTA */
+.landing-cta {
+  text-align: center;
+  padding: 80px 40px;
+  background: var(--bg-card);
+  border-top: .5px solid var(--border);
+  border-bottom: .5px solid var(--border);
+}
+.landing-cta-logo {
+  width: 56px; height: 56px;
+  background: #34c759;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+}
+.landing-cta-logo svg { width: 32px; height: 32px; }
+.landing-cta-title { font-size: 2rem; font-weight: 800; letter-spacing: -.03em; margin: 0 0 12px; }
+.landing-cta-desc { font-size: 1rem; color: var(--text-secondary); margin: 0 0 28px; }
+
+/* Footer */
+.landing-footer {
+  text-align: center;
+  padding: 24px;
+  font-size: .78rem;
+  color: var(--text-tertiary);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  letter-spacing: .1em;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .landing-hero { grid-template-columns: 1fr; padding: 40px 20px; }
+  .landing-hero-visual { display: none; }
+  .landing-hero-title { font-size: 2rem; }
+  .landing-features { grid-template-columns: 1fr 1fr; padding: 40px 20px; }
+  .landing-nav { padding: 16px 20px; }
+}

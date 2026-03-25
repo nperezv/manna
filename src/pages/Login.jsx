@@ -49,10 +49,14 @@ export default function Login() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-brand">
-          <div className="auth-logo">M</div>
+          <div className="auth-logo">
+            <svg viewBox="0 0 28 28" fill="none">
+              <path d="M3 24 L3 6 L14 15 L25 6 L25 24 Z" fill="white"/>
+            </svg>
+          </div>
           <div className="auth-brand-text">
             <div className="auth-appname">manna</div>
-            <div className="auth-tagline">Administra lo que se te confió</div>
+            <div className="auth-tagline">finanzas familiares</div>
           </div>
         </div>
 

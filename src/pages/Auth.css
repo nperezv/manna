@@ -25,31 +25,35 @@
 }
 
 .auth-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--gold);
-  color: #fff;
-  font-size: 1.4rem;
-  font-weight: 800;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #34c759;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-sans);
   flex-shrink: 0;
+  overflow: hidden;
 }
+.auth-logo svg { width: 28px; height: 28px; }
 
 .auth-appname {
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-family: var(--font-brand, 'Poppins', sans-serif);
+  font-size: 1.1rem;
+  font-weight: 200;
   color: var(--text-primary);
-  letter-spacing: -.04em;
+  letter-spacing: .54em;
+  line-height: 1.1;
 }
 
 .auth-tagline {
-  font-size: .75rem;
+  font-family: var(--font-brand, 'Poppins', sans-serif);
+  font-size: .65rem;
+  font-weight: 300;
   color: var(--text-tertiary);
-  margin-top: 1px;
+  letter-spacing: .155em;
+  text-transform: uppercase;
+  margin-top: 2px;
 }
 
 .auth-tabs {
