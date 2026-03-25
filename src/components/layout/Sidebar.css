@@ -39,10 +39,10 @@
 }
 .sidebar-subtitle {
   font-family: var(--font-brand, 'Poppins', sans-serif);
-  font-size: .58rem;
+  font-size: .55rem;
   font-weight: 300;
   color: var(--text-tertiary);
-  letter-spacing: .155em;
+  letter-spacing: .13em;
   text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
