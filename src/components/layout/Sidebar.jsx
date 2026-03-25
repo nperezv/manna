@@ -103,7 +103,7 @@ export default function Sidebar() {
         </div>
         <div className="sidebar-brand-text">
           <span className="sidebar-appname">manna</span>
-          <span className="sidebar-subtitle">{family?.name || ''}</span>
+          <span className="sidebar-subtitle">finanzas familiares</span>
         </div>
       </div>
 
