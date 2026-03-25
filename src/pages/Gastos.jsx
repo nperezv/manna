@@ -9,6 +9,7 @@ import { suggestCategory } from '../utils/autoCategorizacion'
 import CategoryPicker from '../components/modals/CategoryPicker'
 import AddExpenseModal from '../components/modals/AddExpenseModal'
 import './Gastos.css'
+import { useFamilySocket } from '../hooks/useSocket'
 
 function prevM(m) { const [y,mo]=m.split('-').map(Number); const d=new Date(y,mo-2,1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}` }
 function nextM(m) { const [y,mo]=m.split('-').map(Number); const d=new Date(y,mo,1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}` }
@@ -86,6 +87,9 @@ export default function Gastos() {
 
   const isCurrentMonth = month === getCurrentMonth()
   const { expenses, loading, refetch, updateExpense, deleteExpense } = useExpenses(month)
+
+  // Real-time sync
+  useFamilySocket({ onExpense: () => refetch() })
 
   const total = expenses.reduce((s,e) => s+parseFloat(e.amount),0)
 

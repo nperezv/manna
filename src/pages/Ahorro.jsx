@@ -3,9 +3,13 @@ import { useSavings } from '../hooks/useData'
 import { Card, Button, Badge, ProgressBar, PageHeader, EmptyState } from '../components/ui'
 import { formatCurrency } from '../utils/helpers'
 import './Ahorro.css'
+import { useFamilySocket } from '../hooks/useSocket'
 
 export default function Ahorro() {
-  const { goals, loading, addGoal, updateGoal, deleteGoal, addToGoal } = useSavings()
+  const { goals, loading, refetch, addGoal, updateGoal, deleteGoal, addToGoal } = useSavings()
+
+  // Real-time sync
+  useFamilySocket({ onSavings: () => refetch() })
   const [showForm, setShowForm] = useState(false)
   const [addingToId, setAddingToId] = useState(null)
   const [addAmount, setAddAmount] = useState('')

@@ -5,6 +5,7 @@ import { Card, Button, Badge, ProgressBar, PageHeader } from '../components/ui'
 import MonthNav from '../components/ui/MonthNav'
 import { formatCurrency, getCurrentMonth, getMonthLabel, getShortMonthLabel } from '../utils/helpers'
 import './Diezmos.css'
+import { useFamilySocket } from '../hooks/useSocket'
 
 // ── Receipt helpers ────────────────────────────────────────────
 async function fileToBase64(file) {
@@ -190,6 +191,9 @@ export default function Diezmos() {
   const [viewReceipt, setViewReceipt] = useState(null)
 
   const { titheData, loading, refetch, pay } = useTithe(month)
+
+  // Real-time sync
+  useFamilySocket({ onTithe: () => refetch() })
   const { data: history } = useApi(() => api.tithe.history(), [])
 
   const handlePay = async (payment) => {

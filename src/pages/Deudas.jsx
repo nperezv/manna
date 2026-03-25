@@ -3,6 +3,7 @@ import { useDebts } from '../hooks/useData'
 import { Card, Button, Badge, ProgressBar, PageHeader, EmptyState } from '../components/ui'
 import { formatCurrency } from '../utils/helpers'
 import './Deudas.css'
+import { useFamilySocket } from '../hooks/useSocket'
 
 const DEBT_TYPES = [
   {value:'hipoteca',label:'Hipoteca'},
@@ -13,7 +14,10 @@ const DEBT_TYPES = [
 ]
 
 export default function Deudas() {
-  const { debts, loading, addDebt, updateDebt, deleteDebt, payDebt } = useDebts()
+  const { debts, loading, refetch, addDebt, updateDebt, deleteDebt, payDebt } = useDebts()
+
+  // Real-time sync
+  useFamilySocket({ onDebt: () => refetch() })
   const [showForm, setShowForm] = useState(false)
   const [payingId, setPayingId] = useState(null)
   const [payAmount, setPayAmount] = useState('')

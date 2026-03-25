@@ -6,6 +6,7 @@ import { Card, Button, Badge, PageHeader, EmptyState } from '../components/ui'
 import MonthNav from '../components/ui/MonthNav'
 import { formatCurrency, formatShortDate, getCurrentMonth, getMonthLabel } from '../utils/helpers'
 import './Ingresos.css'
+import { useFamilySocket } from '../hooks/useSocket'
 
 function prevM(m){const[y,mo]=m.split('-').map(Number);const d=new Date(y,mo-2,1);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
 function nextM(m){const[y,mo]=m.split('-').map(Number);const d=new Date(y,mo,1);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
@@ -34,7 +35,10 @@ export default function Ingresos() {
   })
 
   const isCurrentMonth = month === getCurrentMonth()
-  const { incomes, loading, addIncome, deleteIncome } = useIncomes(month)
+  const { incomes, loading, refetch, addIncome, deleteIncome } = useIncomes(month)
+
+  // Real-time sync
+  useFamilySocket({ onIncome: () => refetch() })
 
   const total = incomes.reduce((s,i) => s+parseFloat(i.amount), 0)
   const computableTotal = incomes.filter(i=>i.computable).reduce((s,i) => s+parseFloat(i.amount), 0)
