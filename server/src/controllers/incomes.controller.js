@@ -40,6 +40,7 @@ const createIncome = async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
       [req.user.familyId, req.user.userId, source, category, amount, computable, date, description, member_name]
     )
+    req.app.get('emitToFamily')?.(req.user.familyId, 'data_changed', { type: 'income' })
     return res.status(201).json(result.rows[0])
   } catch (err) {
     console.error('createIncome error:', err)

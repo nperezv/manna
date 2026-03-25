@@ -39,6 +39,7 @@ const createExpense = async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
       [req.user.familyId, req.user.userId, description, amount, category_id, date, member_name, source]
     )
+    req.app.get('emitToFamily')?.(req.user.familyId, 'data_changed', { type: 'expense' })
     return res.status(201).json(result.rows[0])
   } catch (err) {
     console.error('createExpense error:', err)
