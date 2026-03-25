@@ -1,4 +1,4 @@
-const BASE_URL = '/api'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 let accessToken = null
 export const setAccessToken = (token) => { accessToken = token }
@@ -116,9 +116,15 @@ export const api = {
   donations: {
     list:   ()       => get('/donations'),
     create: (b)      => post('/donations', b),
-    update: (id, b)  => patch(`/donations/${id}`, b),
     delete: (id)     => del(`/donations/${id}`),
     pay:    (id, b)  => post(`/donations/${id}/pay`, b),
+  },
+  bank: {
+    institutions: (country) => get(`/bank/institutions${country ? `?country=${country}` : ''}`),
+    connect:      (b)       => post('/bank/connect', b),
+    sync:         ()        => post('/bank/sync', {}),
+    status:       ()        => get('/bank/status'),
+    disconnect:   (id)      => del(`/bank/connections/${id}`),
   },
   profile: {
     update:         (b) => patch('/profile', b),
