@@ -108,10 +108,53 @@ const upsertSubcategoryBudget = async (req, res) => {
 
 // ── Custom subcategories (shared across family via DB) ────────
 
+// Default subcategories to seed for new families
+const DEFAULT_SUBS = [
+  { name: 'Alquiler / hipoteca',    color: '#4a9fd4', parent_id: 2,  pillar: 2 },
+  { name: 'Comunidad de vecinos',   color: '#5aaee4', parent_id: 2,  pillar: 2 },
+  { name: 'Seguro del hogar',       color: '#6abed4', parent_id: 2,  pillar: 2 },
+  { name: 'Agua',                   color: '#2d8bbf', parent_id: 20, pillar: 2 },
+  { name: 'Electricidad',           color: '#3d9bcf', parent_id: 20, pillar: 2 },
+  { name: 'Gas',                    color: '#4dabbf', parent_id: 20, pillar: 2 },
+  { name: 'Internet / teléfono',    color: '#5dbbcf', parent_id: 20, pillar: 2 },
+  { name: 'Supermercado',           color: '#e6ad3c', parent_id: 3,  pillar: 2 },
+  { name: 'Restaurantes',           color: '#f0bd4c', parent_id: 3,  pillar: 2 },
+  { name: 'Transporte público',     color: '#8b6cf7', parent_id: 4,  pillar: 2 },
+  { name: 'Gasolina',               color: '#9b7cf7', parent_id: 4,  pillar: 2 },
+  { name: 'Colegio / universidad',  color: '#e05c4e', parent_id: 5,  pillar: 2 },
+  { name: 'Material escolar',       color: '#f06c5e', parent_id: 5,  pillar: 2 },
+  { name: 'Farmacia',               color: '#f0a030', parent_id: 6,  pillar: 2 },
+  { name: 'Médico / seguro',        color: '#f0b040', parent_id: 6,  pillar: 2 },
+  { name: 'Streaming',              color: '#7c5cbf', parent_id: 21, pillar: 2 },
+  { name: 'Gimnasio',               color: '#8c6ccf', parent_id: 21, pillar: 2 },
+  { name: 'Ocio familiar',          color: '#d4548a', parent_id: 7,  pillar: 2 },
+  { name: 'Vacaciones',             color: '#e4649a', parent_id: 7,  pillar: 2 },
+]
+
+async function seedDefaultSubs(familyId) {
+  for (const sub of DEFAULT_SUBS) {
+    await pool.query(
+      `INSERT INTO custom_subcategories (family_id, name, color, parent_id, pillar, bank_channel, budgeted)
+       VALUES ($1,$2,$3,$4,$5,'manual',0)
+       ON CONFLICT DO NOTHING`,
+      [familyId, sub.name, sub.color, sub.parent_id, sub.pillar]
+    ).catch(() => {})
+  }
+}
+
+
 const getCustomSubs = async (req, res) => {
   const { parent_id } = req.query
   const familyId = req.user.familyId
   try {
+    // Check if family has any custom subs — if not, seed defaults
+    const countRes = await pool.query(
+      `SELECT COUNT(*) FROM custom_subcategories WHERE family_id=$1`, [familyId]
+    )
+    if (parseInt(countRes.rows[0].count) === 0) {
+      await seedDefaultSubs(familyId)
+    }
+
     const q = parent_id
       ? `SELECT * FROM custom_subcategories WHERE family_id=$1 AND parent_id=$2 ORDER BY created_at`
       : `SELECT * FROM custom_subcategories WHERE family_id=$1 ORDER BY created_at`
