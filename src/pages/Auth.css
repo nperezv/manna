@@ -25,8 +25,8 @@
 }
 
 .auth-logo {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: #34c759;
   display: flex;
@@ -35,7 +35,11 @@
   flex-shrink: 0;
   overflow: hidden;
 }
-.auth-logo svg { width: 28px; height: 28px; }
+.auth-logo svg {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
 
 .auth-appname {
   font-family: var(--font-brand, 'Poppins', sans-serif);
