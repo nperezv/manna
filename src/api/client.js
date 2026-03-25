@@ -1,4 +1,4 @@
-const BASE_URL = 'api'
+const BASE_URL = '/api'
 
 let accessToken = null
 export const setAccessToken = (token) => { accessToken = token }
@@ -52,7 +52,7 @@ const get   = (url)       => request(url)
 const post  = (url, body) => request(url, { method: 'POST',   body: JSON.stringify(body) })
 const put   = (url, body) => request(url, { method: 'PUT',    body: JSON.stringify(body) })
 const patch = (url, body) => request(url, { method: 'PATCH',  body: JSON.stringify(body) })
-const del   = (url)       => request(url, { method: 'DELETE' })
+const del   = (url, body) => request(url, { method: 'DELETE', ...(body ? { body: JSON.stringify(body) } : {}) })
 
 export const api = {
   auth: {
@@ -87,9 +87,9 @@ export const api = {
     history: ()      => get('/tithe/history'),
   },
   budget: {
-    get:            (month) => get(`/budget${month ? `?month=${month}` : ''}`),
-    setCategory:    (b)     => put('/budget/category', b),
-    setSubcategory: (b)     => put('/budget/subcategory', b),
+    get:             (month) => get(`/budget${month ? `?month=${month}` : ''}`),
+    setCategory:     (b)     => put('/budget/category', b),
+    setSubcategory:  (b)     => put('/budget/subcategory', b),
     suggest:         (month) => get(`/budget/suggest?month=${month}`),
     copy:            (b)     => post('/budget/copy', b),
     customSubs:      (pid)   => get(`/budget/custom-subs${pid ? `?parent_id=${pid}` : ''}`),
@@ -98,6 +98,9 @@ export const api = {
     deleteCustomSub: (id)    => del(`/budget/custom-subs/${id}`),
     renamedSubs:     ()      => get('/budget/renamed-subs'),
     renameSystemSub: (b)     => patch('/budget/renamed-subs', b),
+    hiddenSubs:      ()      => get('/budget/hidden-subs'),
+    hideSystemSub:   (b)     => post('/budget/hidden-subs', b),
+    showSystemSub:   (b)     => del('/budget/hidden-subs', b),
   },
   debts: {
     list:    ()        => get('/debts'),
@@ -116,15 +119,9 @@ export const api = {
   donations: {
     list:   ()       => get('/donations'),
     create: (b)      => post('/donations', b),
+    update: (id, b)  => patch(`/donations/${id}`, b),
     delete: (id)     => del(`/donations/${id}`),
     pay:    (id, b)  => post(`/donations/${id}/pay`, b),
-  },
-  bank: {
-    institutions: (country) => get(`/bank/institutions${country ? `?country=${country}` : ''}`),
-    connect:      (b)       => post('/bank/connect', b),
-    sync:         ()        => post('/bank/sync', {}),
-    status:       ()        => get('/bank/status'),
-    disconnect:   (id)      => del(`/bank/connections/${id}`),
   },
   profile: {
     update:         (b) => patch('/profile', b),
