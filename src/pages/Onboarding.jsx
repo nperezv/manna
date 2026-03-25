@@ -100,7 +100,11 @@ export default function Onboarding() {
         {/* Step 0 — Welcome */}
         {step === 0 && (
           <div className="ob-step">
-            <div className="ob-logo">M</div>
+            <div className="ob-logo">
+              <svg viewBox="0 0 28 28" fill="none" style={{width:26,height:26,display:'block'}}>
+                <path d="M3 24 L3 6 L14 15 L25 6 L25 24 Z" fill="white"/>
+              </svg>
+            </div>
             <h1 className="ob-title">Bienvenido a<br/><em>Manna</em></h1>
             <p className="ob-desc">Tu app de finanzas familiares basada en los principios del bienestar personal y familiar de La Iglesia de Jesucristo de los Santos de los Últimos Días.</p>
             <div className="ob-pillars">
