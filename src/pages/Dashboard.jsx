@@ -125,7 +125,7 @@ export default function Dashboard() {
     <div className="dashboard">
       <div className="dash-header">
         <div className="dash-header-left">
-          <div className="dash-family-name">{family?.name || ''}</div>
+          <div className="dash-family-name">familia {family?.name || ''}</div>
           <div className="dash-greeting">
             {new Date().getHours() < 12 ? 'Buenos días' : new Date().getHours() < 20 ? 'Buenas tardes' : 'Buenas noches'}, {user?.name?.split(' ')[0] || ''}
           </div>
