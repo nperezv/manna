@@ -50,7 +50,7 @@ export default function Deudas() {
 
   return (
     <div className="deudas-page">
-      <PageHeader title="Deudas — Pilar 4"
+      <PageHeader title="Deudas"
         subtitle="Evitar y eliminar deudas"
         action={<Button size="sm" onClick={()=>setShowForm(!showForm)}>+ Añadir deuda</Button>}/>
 
