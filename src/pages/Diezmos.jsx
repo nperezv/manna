@@ -209,7 +209,7 @@ export default function Diezmos() {
   return (
     <div className="diezmos-page">
       <PageHeader
-        title="Pilar 1 — Pagar al Señor"
+        title="Pagar al Señor"
         subtitle={<MonthNav month={month} onChange={setMonth}/>}
       />
       <div className="diezmos-content">
