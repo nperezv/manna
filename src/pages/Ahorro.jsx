@@ -38,7 +38,7 @@ export default function Ahorro() {
 
   return (
     <div className="ahorro-page">
-      <PageHeader title="Ahorro — Pilar 3" subtitle="Ahorrar para el futuro"
+      <PageHeader title="Ahorro" subtitle="Ahorrar para el futuro"
         action={<Button size="sm" onClick={()=>setShowForm(!showForm)}>+ Nueva meta</Button>}/>
 
       <div className="ahorro-content">
